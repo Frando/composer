@@ -9,6 +9,13 @@
           <a href="#">Two
         <li>
           <a href="#">Three
+      <p.navbar-text.pull-right>
+        $case mauth
+          $of Nothing
+            <a href="@{AuthR LoginR}">
+              Log in
+          $of Just auth
+            <span>Logged in as #{show auth}
 
 <div.container>
   $maybe msg <- mmsg
