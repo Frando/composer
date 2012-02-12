@@ -1,0 +1,6 @@
+<h1>User profile
+
+<form method="post" action="@{ProfileR}" enctype="#{enctype}">
+  ^{formWidget}
+  <div.form-actions>
+    <button.btn.btn-primary type="submit">Save changes

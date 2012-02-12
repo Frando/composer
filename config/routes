@@ -7,3 +7,5 @@
 / RootR GET
 
 /user/#Text UserR GET
+
+/profile ProfileR GET POST
