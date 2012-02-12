@@ -38,6 +38,7 @@ import Text.Jasmine (minifym)
 import Web.ClientSession (getKey)
 import Text.Hamlet (hamletFile, shamlet)
 import Text.Blaze.Renderer.Text (renderHtml)
+import Data.Text (Text)
 #if DEVELOPMENT
 import qualified Data.Text.Lazy.Encoding
 import Network.Mail.Mime (renderMail', simpleMail, Mail, Address(..))
@@ -116,7 +117,7 @@ instance YesodAuth Substantial where
     case x of
       Just (Entity uid _) -> return $ Just uid
       Nothing -> do
-        fmap Just $ insert $ User (credsIdent creds) Nothing
+        fmap Just $ insert $ mkUser (credsIdent creds)
 
   authPlugins _ = [authBrowserId, authGoogleEmail, authEmail]
 
@@ -153,7 +154,7 @@ instance YesodAuthEmail Substantial where
     case me of
       Nothing -> return Nothing
       Just e -> do
-        uid <- insert $ User (emailEmail e) Nothing
+        uid <- insert $ mkUser (emailEmail e)
         update eid [EmailUser =. Just uid]
         return $ Just uid
   
@@ -190,7 +191,15 @@ instance YesodAuthEmail Substantial where
   getEmail eid = runDB $ do
     liftM (fmap emailEmail) $ get eid
 
-    
+--mkUser :: Text -> User
+mkUser ident = User
+  { userIdent    = ident
+  , userFullName = Nothing
+  , userWebsite  = Nothing
+  , userCompany  = Nothing
+  , userLocation = Nothing
+  , userPassword = Nothing
+  }
 
 emailFrom :: Address
 emailFrom = Address Nothing "noreply@substantial.io"

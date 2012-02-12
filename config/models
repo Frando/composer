@@ -1,9 +1,18 @@
 User
-    ident Text
-    password Text Maybe
-    UniqueUser ident
+  ident Text
+  fullName Text Maybe
+  website Text Maybe
+  company Text Maybe
+  location Text Maybe
+  password Text Maybe
+  UniqueUser ident
 Email
-    email Text
-    user UserId Maybe
-    verkey Text Maybe
-    UniqueEmail email
+  email Text
+  user UserId Maybe
+  verkey Text Maybe
+  UniqueEmail email
+Username
+  user UserId
+  username Text
+  UniqueUsernameUser user
+  UniqueUsername username

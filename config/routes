@@ -5,3 +5,5 @@
 /robots.txt RobotsR GET
 
 / RootR GET
+
+/user/#Text UserR GET

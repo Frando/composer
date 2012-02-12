@@ -22,12 +22,9 @@ import qualified Database.Persist.Store
 import Database.Persist.GenericSql (runMigration)
 import Network.HTTP.Conduit (newManager, def)
 
--- Import all relevant handler modules here.
 import Handler.Root
+import Handler.User
 
--- This line actually creates our YesodSite instance. It is the second half
--- of the call to mkYesodData which occurs in Foundation.hs. Please see
--- the comments there for more details.
 mkYesodDispatch "Substantial" resourcesSubstantial
 
 -- This function allocates resources (such as a database connection pool),
