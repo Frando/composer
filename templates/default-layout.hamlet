@@ -10,12 +10,14 @@
         <li>
           <a href="#">Three
       <p.navbar-text.pull-right>
-        $case mauth
+        $case mUserIdentifier
           $of Nothing
             <a href="@{AuthR LoginR}">
               Log in
-          $of Just auth
-            <span>Logged in as #{show auth}
+          $of Just userIdentifier
+            <span>
+              Logged in as <a href="@{ProfileR}">#{userIdentifier}</a>.
+              <a href="@{AuthR LogoutR}">Log out
 
 <div.container>
   <div#wrapper-outer>

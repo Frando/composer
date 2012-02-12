@@ -72,6 +72,9 @@ instance Yesod Substantial where
     master <- getYesod
     mmsg <- getMessage
     mauth <- maybeAuth
+    mUserIdentifier <- case mauth of
+      Nothing -> return Nothing
+      Just (Entity uid user) -> liftM Just $ getUserIdentifier uid user
 
     pc <- widgetToPageContent $ do
       addStylesheet $ StaticR bootstrap_css_bootstrap_css
@@ -200,6 +203,16 @@ mkUser ident = User
   , userLocation = Nothing
   , userPassword = Nothing
   }
+
+getUserIdentifier :: UserId -> User -> GHandler sub Substantial Text
+getUserIdentifier uid user = case userFullName user of
+  Just fullName -> return fullName
+  Nothing -> do
+    musername <- runDB $ getBy $ UniqueUsernameUser uid
+    case musername of
+      Nothing -> return $ userIdent user
+      Just username -> return $ usernameUsername (entityVal username)
+    
 
 emailFrom :: Address
 emailFrom = Address Nothing "noreply@substantial.io"
