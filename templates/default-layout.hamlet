@@ -21,7 +21,9 @@
   <div#wrapper-outer>
     <div#wrapper-inner>
       $maybe msg <- mmsg
-        <div #message>#{msg}
+        <div.alert.alert-info>
+          <a.close>x
+          <p>#{msg}
       ^{widget}
   <footer.footer>
     #{extraCopyright $ appExtra $ settings master}
