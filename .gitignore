@@ -1,0 +1,5 @@
+config/client_session_key.aes
+cabal-dev
+dist
+static/tmp
+substantial.sqlite3
