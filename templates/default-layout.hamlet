@@ -1,5 +1,18 @@
-$maybe msg <- mmsg
+<div.navbar.navbar-fixed-top>
+  <div.navbar-inner>
+    <div.container>
+      <a.brand href="@{RootR}">Substantial
+      <ul.nav>
+        <li>
+          <a href="#">One
+        <li>
+          <a href="#">Two
+        <li>
+          <a href="#">Three
+
+<div.container>
+  $maybe msg <- mmsg
     <div #message>#{msg}
-^{widget}
-<footer>
+  ^{widget}
+  <footer.footer>
     #{extraCopyright $ appExtra $ settings master}
