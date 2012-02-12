@@ -18,8 +18,10 @@
             <span>Logged in as #{show auth}
 
 <div.container>
-  $maybe msg <- mmsg
-    <div #message>#{msg}
-  ^{widget}
+  <div#wrapper-outer>
+    <div#wrapper-inner>
+      $maybe msg <- mmsg
+        <div #message>#{msg}
+      ^{widget}
   <footer.footer>
     #{extraCopyright $ appExtra $ settings master}
