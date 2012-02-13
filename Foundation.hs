@@ -18,8 +18,6 @@ import Yesod
 import Yesod.Static
 import Settings.StaticFiles
 import Yesod.Auth
-import Yesod.Auth.BrowserId
-import Yesod.Auth.GoogleEmail
 import Yesod.Auth.Email
 import Yesod.Default.Config
 import Yesod.Default.Util (addStaticContentExternal)
@@ -122,7 +120,7 @@ instance YesodAuth Substantial where
       Nothing -> do
         fmap Just $ insert $ mkUser (credsIdent creds)
 
-  authPlugins _ = [authBrowserId, authGoogleEmail, authEmail]
+  authPlugins _ = [authEmail]
 
   authHttpManager = httpManager
 
@@ -194,7 +192,7 @@ instance YesodAuthEmail Substantial where
   getEmail eid = runDB $ do
     liftM (fmap emailEmail) $ get eid
 
---mkUser :: Text -> User
+mkUser :: Text -> User
 mkUser ident = User
   { userIdent    = ident
   , userFullName = Nothing
