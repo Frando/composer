@@ -1,1 +1,10 @@
 <h1>#{documentTitle doc}
+
+<div.subnav>
+  <ul.nav.nav-pills>
+    <li>
+      <a href="#">Four
+    <li>
+      <a href="#">Five
+    <li>
+      <a href="#">Six
