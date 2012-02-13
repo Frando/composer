@@ -5,6 +5,8 @@ module Handler.User
 import Import
 import Data.Text.Read (decimal)
 import Helper.Gravatar (maybeGravatar)
+import Data.Maybe (catMaybes)
+import Control.Monad (forM)
 
 getUserByIdent :: Text -> Handler (Either Text (Maybe Text, UserId, User))
 getUserByIdent ident = case decimal ident :: Either String (Int, Text) of
@@ -33,6 +35,12 @@ getUserR ident = do
       mcuid <- maybeAuthId
       let isCurrentUser = mcuid == Just uid
       memail <- fmap (fmap $ emailEmail . entityVal) $ runDB $ selectFirst [EmailUser ==. Just uid] []
+      -- TODO: efficiency
+      permissions <- runDB $ selectList [PermissionUser ==. uid, PermissionRole <-. [Author, Collaborator]] [LimitTo 100]
+      docs <- liftM catMaybes $ runDB $ forM permissions $ \permission -> do
+        let docid = permissionDocument $ entityVal permission
+        doc <- get docid
+        return $ fmap ((,) docid) doc
       let identifier = maybe (toHtml $ show uid) toHtml $ musername `mplus` memail
       defaultLayout $ do
         setTitle "User page"

@@ -34,3 +34,12 @@
             <th>Location
             <td>#{location}
     <div.span8>
+      <h2>Documents
+      $if null docs
+        <p>No documents ... yet.
+      $else
+        <p>#{length docs} document(s):
+        <ul>
+          $forall (docid, doc) <- docs
+            <li>
+              <a href="@{DocumentR docid}">#{documentTitle doc}
