@@ -9,6 +9,7 @@ module Foundation
   , maybeAuth
   , requireAuth
   , requireAuthId
+  , maybeAuthId
   , module Settings
   , module Model
   ) where

@@ -30,6 +30,8 @@ getUserR ident = do
   case euser of
     Left username -> redirect $ UserR username
     Right (musername, uid, user) -> do
+      mcuid <- maybeAuthId
+      let isCurrentUser = mcuid == Just uid
       memail <- fmap (fmap $ emailEmail . entityVal) $ runDB $ selectFirst [EmailUser ==. Just uid] []
       let identifier = maybe (toHtml $ show uid) toHtml $ musername `mplus` memail
       defaultLayout $ do

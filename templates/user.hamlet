@@ -1,18 +1,19 @@
 <section#user>
   <div.page-header>
     <h1>
-      <img.gravatar alt="Gravatar" src="#{maybeGravatar 40 memail}">
-      #{identifier}
-      $maybe fullName <- userFullName user
-        <small>(#{fullName})
+      <img.gravatar alt="Gravatar" src="#{maybeGravatar 40 memail}"> #
+      $case userFullName user
+        $of Nothing
+          #{identifier}
+        $of Just fullName
+          #{fullName}
+          \ <small>(#{identifier})</small>
+      $if isCurrentUser
+        <a.btn.pull-right href="@{ProfileR}">Edit</a>
     
   <div.row>
-    <div.span6>
+    <div.span4>
       <table.table.table-condensed>
-        $maybe fullName <- userFullName user
-          <tr>
-            <th>Name
-            <td>#{fullName}
         $maybe email <- memail
           <tr>
             <th>Email
@@ -32,4 +33,4 @@
           <tr>
             <th>Location
             <td>#{location}
-    <div.span6>
+    <div.span8>

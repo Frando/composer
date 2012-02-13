@@ -5,7 +5,7 @@
   <div.row>
     <div.span3>
       <p>
-        <img.gravatar alt="Gravatar" src="#{maybeGravatar 200 memail}">
+        <img.gravatar alt="Gravatar" src="#{maybeGravatar 200 memail}" width="200" height="200">
       $case memail
         $of Nothing
           <p>Set your avatar at <a href="http://gravatar.com/">gravatar.com</a>
