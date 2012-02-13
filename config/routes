@@ -10,3 +10,6 @@
 
 /profile ProfileR GET POST
 /profile/set-username SetUsernameR POST
+
+/new-document NewDocumentR GET POST
+/document/#DocumentId DocumentR GET

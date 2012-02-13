@@ -25,6 +25,7 @@ import Network.HTTP.Conduit (newManager, def)
 import Handler.Root
 import Handler.User
 import Handler.Profile
+import Handler.Document
 
 mkYesodDispatch "Substantial" resourcesSubstantial
 

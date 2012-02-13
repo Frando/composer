@@ -1,0 +1,11 @@
+<section#new-document>
+  <div.page-header>
+    <h1>New Document
+
+<div.row>
+  <div.span6>
+    <form method="post" action="@{NewDocumentR}">
+      ^{newDocumentFormWidget}
+      <div.form-actions>
+        <button.btn.btn-primary type="submit">Create</button>
+  <div.span6>

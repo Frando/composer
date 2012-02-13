@@ -100,6 +100,21 @@ instance Yesod Substantial where
 
   yepnopeJs _ = Just $ Right $ StaticR js_modernizr_js
 
+  isAuthorized (DocumentR docid) _ = do
+    doc <- runDB $ get404 docid
+    case documentPublishSettings doc of
+      Private -> do
+        muid <- maybeAuthId
+        case muid of
+          Nothing -> return AuthenticationRequired
+          Just uid -> do
+            mpermission <- runDB $ getBy $ UniqueUserDocument uid docid
+            case mpermission of
+              Nothing -> return $ Unauthorized "You have to ask one of the authors for the permission to view this document."
+              Just _ -> return Authorized
+      _ -> return Authorized 
+  isAuthorized _ _ = return Authorized
+
 instance YesodPersist Substantial where
   type YesodPersistBackend Substantial = SqlPersist
   runDB f = do
