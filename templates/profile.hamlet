@@ -1,6 +1,27 @@
-<h1>User profile
+<section#profile>
+  <div.page-header>
+    <h1>User profile
 
-<form method="post" action="@{ProfileR}" enctype="#{enctype}">
-  ^{formWidget}
-  <div.form-actions>
-    <button.btn.btn-primary type="submit">Save changes
+  <div.row>
+    <div.span6>
+      <h2>General information
+      <form method="post" action="@{ProfileR}" enctype="#{userEnctype}">
+        ^{formWidget}
+        <div.form-actions>
+          <button.btn.btn-primary type="submit">Save changes
+    <div.span6>
+      <a href="@{AuthR setpassR}">Set password
+      <h2>Username
+      <form.form-inline method="post" action="@{SetUsernameR}" enctype="#{usernameEnctype}">
+        $case musername
+          $of Nothing
+            <p>You don't have a username yet, choose one!
+          $of Just username
+            <p>Your current username is: #{username}
+        ^{usernameFormWidget}
+        <button.btn.btn-primary type="submit">
+          $case musername
+            $of Nothing
+              \Set username
+            $of Just _
+              \Update username

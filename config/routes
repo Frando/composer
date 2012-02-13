@@ -9,3 +9,4 @@
 /user/#Text UserR GET
 
 /profile ProfileR GET POST
+/profile/set-username SetUsernameR POST

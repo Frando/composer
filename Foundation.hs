@@ -8,6 +8,7 @@ module Foundation
   , Form
   , maybeAuth
   , requireAuth
+  , requireAuthId
   , module Settings
   , module Model
   ) where
@@ -110,6 +111,7 @@ instance YesodPersist Substantial where
 instance YesodAuth Substantial where
   type AuthId Substantial = UserId
 
+  redirectToReferer _ = True
   loginDest _ = RootR
   logoutDest _ = RootR
 
