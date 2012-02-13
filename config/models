@@ -16,3 +16,11 @@ Username
   username Text
   UniqueUsernameUser user
   UniqueUsername username
+Document
+  title Text
+  publishSettings PublishSettings
+Permission
+  user UserId
+  document DocumentId
+  role Role
+  UniqueUserDocument user document
