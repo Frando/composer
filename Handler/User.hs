@@ -4,6 +4,7 @@ module Handler.User
 
 import Import
 import Data.Text.Read (decimal)
+import Helper.Gravatar (maybeGravatar)
 
 getUserByIdent :: Text -> Handler (Either Text (Maybe Text, UserId, User))
 getUserByIdent ident = case decimal ident :: Either String (Int, Text) of

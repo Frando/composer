@@ -16,8 +16,8 @@
               Log in
           $of Just userIdentifier
             <span>
-              Logged in as <a href="@{ProfileR}">#{userIdentifier}</a>.
-              <a href="@{AuthR LogoutR}">Log out
+              Logged in as <a href="@{ProfileR}">#{userIdentifier}</a>. #
+              <a href="@{AuthR LogoutR}">Log out</a>
 
 <div.container>
   <div#wrapper-outer>

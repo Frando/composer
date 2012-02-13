@@ -1,15 +1,25 @@
 <section#profile>
   <div.page-header>
-    <h1>User profile
+    <h1>Your Profile
 
   <div.row>
-    <div.span6>
-      <h2>General information
+    <div.span3>
+      <p>
+        <img.gravatar alt="Gravatar" src="#{maybeGravatar 200 memail}">
+      $case memail
+        $of Nothing
+          <p>Set your avatar at <a href="http://gravatar.com/">gravatar.com</a>
+        $of Just _
+          <p>Set your avatar at <a href="http://gravatar.com/">gravatar.com</a>
+          
+    <div.span4>
+      <h2>Public information
       <form method="post" action="@{ProfileR}" enctype="#{userEnctype}">
         ^{formWidget}
         <div.form-actions>
-          <button.btn.btn-primary type="submit">Save changes
-    <div.span6>
+          <button.btn.btn-primary type="submit">Save changes</button> #
+          <button.btn type="reset">Cancel</button>
+    <div.span5>
       <a href="@{AuthR setpassR}">Set password
       <h2>Username
       <form.form-inline method="post" action="@{SetUsernameR}" enctype="#{usernameEnctype}">
@@ -18,7 +28,7 @@
             <p>You don't have a username yet, choose one!
           $of Just username
             <p>Your current username is: #{username}
-        ^{usernameFormWidget}
+        ^{usernameFormWidget} #
         <button.btn.btn-primary type="submit">
           $case musername
             $of Nothing

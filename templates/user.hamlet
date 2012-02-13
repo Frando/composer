@@ -1,35 +1,35 @@
 <section#user>
   <div.page-header>
     <h1>
-      User blabla
+      <img.gravatar alt="Gravatar" src="#{maybeGravatar 40 memail}">
       #{identifier}
       $maybe fullName <- userFullName user
-        <small>#{fullName}
+        <small>(#{fullName})
     
-    <div.row>
-      <div.span6>
-        <table.table.table-condensed>
-          $maybe fullName <- userFullName user
-            <tr>
-              <th>Name
-              <td>#{fullName}
-          $maybe email <- memail
-            <tr>
-              <th>Email
-              <td>
-                <a href="mailto:#{email}">#{email}
-          $maybe website <- userWebsite user
-            <tr>
-              <th>Website
-              <td>
-                <!-- TODO: filter javascript links, validate -->
-                <a href="#{website}">#{website}
-          $maybe company <- userCompany user
-            <tr>
-              <th>Company
-              <td>#{company}
-          $maybe location <- userLocation user
-            <tr>
-              <th>Location
-              <td>#{location}
-      <div.span6>
+  <div.row>
+    <div.span6>
+      <table.table.table-condensed>
+        $maybe fullName <- userFullName user
+          <tr>
+            <th>Name
+            <td>#{fullName}
+        $maybe email <- memail
+          <tr>
+            <th>Email
+            <td>
+              <a href="mailto:#{email}">#{email}
+        $maybe website <- userWebsite user
+          <tr>
+            <th>Website
+            <td>
+              <!-- TODO: filter javascript links, validate -->
+              <a href="#{website}">#{website}
+        $maybe company <- userCompany user
+          <tr>
+            <th>Company
+            <td>#{company}
+        $maybe location <- userLocation user
+          <tr>
+            <th>Location
+            <td>#{location}
+    <div.span6>

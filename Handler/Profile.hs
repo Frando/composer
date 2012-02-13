@@ -8,6 +8,7 @@ import Import
 import Yesod.Auth.Email (setpassR)
 import qualified Data.Text as T
 import Data.Char (isAlpha, isAlphaNum)
+import Helper.Gravatar (maybeGravatar)
 
 userForm :: User -> Html -> MForm Substantial Substantial (FormResult User, Widget)
 userForm user = renderTable $ User
@@ -35,6 +36,8 @@ getProfileR = do
   musername <- runDB $ do
     liftM (fmap $ usernameUsername . entityVal) $ getBy $ UniqueUsernameUser uid
   ((_, usernameFormWidget), usernameEnctype) <- generateFormPost $ usernameForm musername
+  memail <- runDB $ do
+    liftM (fmap $ emailEmail . entityVal) $ selectFirst [EmailUser ==. Just uid] []
   defaultLayout $ do
     setTitle "User Profile"
     $(widgetFile "profile")
