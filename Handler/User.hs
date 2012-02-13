@@ -25,10 +25,12 @@ getUserByIdent ident = case decimal ident :: Either String (Int, Text) of
 
 getUserR :: Text -> Handler RepHtml
 getUserR ident = do
-  user <- getUserByIdent ident
-  case user of
+  euser <- getUserByIdent ident
+  case euser of
     Left username -> redirect $ UserR username
-    Right (mun, uid, u) -> do
+    Right (musername, uid, user) -> do
+      memail <- fmap (fmap $ emailEmail . entityVal) $ runDB $ selectFirst [EmailUser ==. Just uid] []
+      let identifier = maybe (toHtml $ show uid) toHtml $ musername `mplus` memail
       defaultLayout $ do
         setTitle "User page"
         $(widgetFile "user")

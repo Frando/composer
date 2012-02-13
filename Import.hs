@@ -5,6 +5,7 @@ module Import
     , (<>)
     , Text
     , module Data.Monoid
+    , module Control.Monad
     , module Control.Applicative
     ) where
 
@@ -12,6 +13,7 @@ import Prelude hiding (writeFile, readFile)
 import Yesod   hiding (Route(..))
 import Foundation
 import Data.Monoid (Monoid (mappend, mempty, mconcat))
+import Control.Monad (mplus)
 import Control.Applicative ((<$>), (<*>), pure)
 import Data.Text (Text)
 
