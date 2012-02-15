@@ -30,6 +30,7 @@ library
     other-modules:   Foundation
                      Import
                      Model
+                     Model.Transaction
                      Settings
                      Settings.StaticFiles
                      Handler.Root
