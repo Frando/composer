@@ -577,6 +577,7 @@ $(document).ready( function() {
 		$toolbar = $( '#es-toolbar' ),
 		$window = $( window );
 	$window.scroll( function() {
+		/*
 		var toolbarWrapperOffset = $toolbarWrapper.offset();
 		if ( $window.scrollTop() > toolbarWrapperOffset.top ) {
 			if ( !$toolbarWrapper.hasClass( 'float' ) ) {
@@ -591,6 +592,7 @@ $(document).ready( function() {
 				$toolbar.css( { 'left': 0, 'right': 0 } );
 			}
 		}
+		*/
 	} );
 
 	var $modeButtons = $( '.es-modes-button' ),

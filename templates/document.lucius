@@ -1,0 +1,14 @@
+#es-docs {
+  display: none;
+}
+
+#es-toolbar-wrapper {
+  position: normal;
+}
+
+.es-toolbar-fixed {
+  position: fixed !important;
+  top: 40px;
+  width: 938px;
+  z-index: 1337;
+}

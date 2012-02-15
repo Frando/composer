@@ -1,0 +1,20 @@
+console.log("Hello from document.julius");
+
+$(document).ready(function () {
+  var toolbarWrapperOffsetTop = null;
+  var MAX_OFFSET = 40;
+  $(window).scroll(function () {
+    var $toolbarWrapper = $('#es-toolbar-wrapper')
+    ,   $toolbar = $('#es-toolbar')
+    ,   scrollTop = $(window).scrollTop();
+    if (!toolbarWrapperOffsetTop) {
+      toolbarWrapperOffsetTop = $toolbarWrapper.offset().top;
+    }
+    console.log();
+    if (scrollTop + MAX_OFFSET >= toolbarWrapperOffsetTop) {
+      $toolbar.addClass('es-toolbar-fixed');
+    } else {
+      $toolbar.removeClass('es-toolbar-fixed');
+    }
+  });
+});

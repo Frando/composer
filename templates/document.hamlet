@@ -8,3 +8,99 @@
       <a href="#">Five
     <li>
       <a href="#">Six
+
+<!-- VisualEditor Sandbox -->
+
+<div id="es-docs" style="visibility: hidden">
+  <div id="es-docs-label">Example documents:
+  <ul id="es-docs-list">
+<div id="es-base" style="visibility: hidden">
+  <div id="es-toolbar-wrapper">
+    <div id="es-toolbar" class="es-toolbar">
+      <div id="es-modes" class="es-modes">
+        <div id="es-mode-wikitext" class="es-modes-button" title="#{modeWikitext}">
+        <div id="es-mode-json" class="es-modes-button" title="#{modeJson}">
+        <div id="es-mode-html" class="es-modes-button" title="#{modeHtml}">
+        <div id="es-mode-render" class="es-modes-button" title="#{modeRender}">
+        <div id="es-mode-history" class="es-modes-button" title="#{modeHistory}">
+        <div id="es-mode-help" class="es-modes-button" title="#{modeHelp}">
+      <div style="clear:both">
+      <div id="es-toolbar-shadow">
+  <div id="es-panes">
+    <div id="es-visual">
+      <div id="es-editor">
+    <div id="es-panels">
+      <div id="es-panel-wikitext" class="es-panel es-code">
+      <div id="es-panel-json" class="es-panel es-code">
+      <div id="es-panel-html" class="es-panel es-code">
+      <div id="es-panel-render" class="es-panel es-render">
+      <div id="es-panel-history" class="es-panel es-code">
+      <div id="es-panel-help" class="es-panel">
+        <div class="es-help-title">Keyboard Shortcuts
+        <div class="es-help-shortcuts-title">Clipboard
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> +
+            <span class="es-help-key">C</span>
+          Copy selected text
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> +
+            <span class="es-help-key">X</span>
+          Cut selected text
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> +
+            <span class="es-help-key">V</span>
+          Paste text at the cursor
+        <div class="es-help-shortcuts-title">History navigation
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> +
+            <span class="es-help-key">Z</span>
+          Undo
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> +
+            <span class="es-help-key">Y</span>
+          Redo
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> +
+            <span class="es-help-key">&#8679;</span> +
+            <span class="es-help-key">Z</span>
+          Redo
+        <div class="es-help-shortcuts-title">Formatting
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> +
+            <span class="es-help-key">B</span>
+          Make selected text bold
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> +
+            <span class="es-help-key">I</span>
+          Make selected text italic
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> +
+            <span class="es-help-key">K</span>
+          Make selected text a link
+        <div class="es-help-shortcuts-title">Selection
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">&#8679;</span> +
+            <span class="es-help-key">Arrow</span>
+          Adjust selection
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#x2325;</span> +
+            <span class="es-help-key">Arrow</span>
+          Move cursor by words or blocks
+        <div class="es-help-shortcut">
+          <span class="es-help-keys">
+            <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#x2325;</span> +
+            <span class="es-help-key">&#8679;</span> +
+            <span class="es-help-key">Arrow</span>
+          Adjust selection by words or blocks
+    <div style="clear:both">
