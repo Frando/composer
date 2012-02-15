@@ -39,6 +39,10 @@ import Web.ClientSession (getKey)
 import Text.Hamlet (hamletFile, shamlet)
 import Text.Blaze.Renderer.Text (renderHtml)
 import Data.Text (Text)
+import qualified Data.Map as M
+import Control.Concurrent.MVar (MVar)
+import Control.Concurrent.Chan (Chan)
+import Network.Wai.EventSource (ServerEvent)
 #if DEVELOPMENT
 import qualified Data.Text.Lazy.Encoding
 import Network.Mail.Mime (renderMail', simpleMail, Mail, Address(..))
@@ -53,6 +57,7 @@ data Substantial = Substantial
   , connPool :: Database.Persist.Store.PersistConfigPool Settings.PersistConfig -- ^ Database connection pool.
   , httpManager :: Manager
   , persistConfig :: Settings.PersistConfig
+  , documentsMap :: MVar (M.Map DocumentId (Int, Chan ServerEvent))
   }
 
 mkMessage "Substantial" "messages" "en"

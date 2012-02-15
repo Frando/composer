@@ -6,9 +6,16 @@
   position: normal;
 }
 
-.es-toolbar-fixed {
-  position: fixed !important;
+#es-toolbar-wrapper {
+  height: 38px;
+}
+
+#es-toolbar.es-toolbar-fixed {
+  position: fixed;
   top: 40px;
   width: 938px;
   z-index: 1337;
+  border-radius: 0;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
 }

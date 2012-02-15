@@ -102,5 +102,11 @@ executable         substantial
                  , yaml                          >= 0.5        && < 0.6
                  , http-conduit                  >= 1.2        && < 1.3
                  , blaze-html                    >= 0.4.3      && < 0.5
+                 , blaze-builder                 >= 0.3        && < 0.4
                  , pureMD5                       >= 2.1        && < 3
                  , utf8-string                   >= 0.3        && < 0.4
+                 , wai-eventsource               >= 1.1        && < 1.2
+                 , containers                    >= 0.4        && < 0.5
+                 , aeson                         >= 0.6        && < 0.7
+                 , conduit                       >= 0.2        && < 0.3
+                 , wai                           >= 1.1        && < 1.2

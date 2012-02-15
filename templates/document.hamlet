@@ -1,5 +1,6 @@
 <h1>#{documentTitle doc}
 
+<!--
 <div.subnav>
   <ul.nav.nav-pills>
     <li>
@@ -8,6 +9,7 @@
       <a href="#">Five
     <li>
       <a href="#">Six
+-->
 
 <!-- VisualEditor Sandbox -->
 

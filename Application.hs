@@ -22,6 +22,9 @@ import qualified Database.Persist.Store
 import Database.Persist.GenericSql (runMigration)
 import Network.HTTP.Conduit (newManager, def)
 
+import Control.Concurrent.MVar (newMVar)
+import qualified Data.Map as M
+
 import Handler.Root
 import Handler.User
 import Handler.Profile
@@ -42,7 +45,8 @@ getApplication conf logger = do
               Database.Persist.Store.applyEnv
     p <- Database.Persist.Store.createPoolConfig (dbconf :: Settings.PersistConfig)
     Database.Persist.Store.runPool dbconf (runMigration migrateAll) p
-    let foundation = Substantial conf setLogger s p manager dbconf
+    documents <- newMVar M.empty
+    let foundation = Substantial conf setLogger s p manager dbconf documents
     app <- toWaiAppPlain foundation
     return $ logWare app
   where

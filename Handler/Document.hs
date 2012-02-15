@@ -2,11 +2,22 @@ module Handler.Document
   ( getNewDocumentR
   , postNewDocumentR
   , getDocumentR
+  , getDocumentTransactionsR
+  , postDocumentTransactionsR
   ) where
 
 import Import
 import Data.Text (pack)
 import Control.Arrow ((&&&))
+import Control.Concurrent.MVar (modifyMVar)
+import Control.Concurrent.Chan (Chan, newChan, dupChan, writeChan)
+import Network.Wai.EventSource (ServerEvent (..), eventSourceApp)
+import qualified Data.Map as M
+import Network.Wai (requestBody)
+import Data.Conduit (runResourceT, ($$))
+import qualified Data.Conduit.List as CL
+import qualified Data.ByteString as BS
+import Blaze.ByteString.Builder.ByteString (fromByteString)
 
 newDocumentForm :: Document -> Html -> MForm Substantial Substantial (FormResult Document, Widget)
 newDocumentForm doc = renderTable $ Document
@@ -116,7 +127,41 @@ getDocumentR docid = do
     addScriptRemote "/static/visual-editor/modules/ve/ui/tools/ve.ui.IndentationButtonTool.js"
     addScriptRemote "/static/visual-editor/modules/ve/ui/tools/ve.ui.DropdownTool.js"
     addScriptRemote "/static/visual-editor/modules/ve/ui/tools/ve.ui.FormatDropdownTool.js"
-    addScriptRemote "/static/visual-editor/modules/sandbox/sandbox.js"
     
     setTitle "Document"
     $(widgetFile "document")
+
+getTransactionsChan :: DocumentId -> Handler (Chan ServerEvent)
+getTransactionsChan docid = do
+  -- TODO: rethink increment of numClient counter
+  y <- getYesod
+  liftIO $ modifyMVar (documentsMap y) $ \docmap ->
+    case M.lookup docid docmap of
+      Nothing -> do
+        let numClients = 1
+        chan <- newChan
+        let docmap' = M.insert docid (numClients, chan) docmap
+        return $ (docmap', chan)
+      Just (numClients, chan) -> do
+        let numClients' = numClients + 1
+        let docmap' = M.insert docid (numClients', chan) docmap
+        return (docmap', chan)
+
+getDocumentTransactionsR :: DocumentId -> Handler ()
+getDocumentTransactionsR docid = do
+  -- TODO: authorization
+  chan <- getTransactionsChan docid
+  chanClone <- liftIO $ dupChan chan
+  req <- waiRequest
+  res <- lift $ eventSourceApp chanClone req
+  sendWaiResponse res
+
+postDocumentTransactionsR :: DocumentId -> Handler ()
+postDocumentTransactionsR docid = do
+  -- TODO: authorization
+  chan <- getTransactionsChan docid
+  req <- waiRequest
+  json <- fmap BS.concat $ liftIO $ runResourceT $ requestBody req $$ CL.consume
+  liftIO $ print json
+  liftIO $ writeChan chan $ ServerEvent Nothing Nothing [fromByteString json]
+  sendResponseCreated $ DocumentR docid
