@@ -41,5 +41,13 @@ getDocumentR :: DocumentId -> Handler RepHtml
 getDocumentR docid = do
   doc <- runDB $ get404 docid
   defaultLayout $ do
+    addStylesheetRemote "../../modules/ve/es/styles/ve.es.Document.css"
+    addStylesheetRemote "../../modules/ve/es/styles/ve.es.Content.css"
+    addStylesheetRemote "../../modules/ve/es/styles/ve.es.Surface.css"
+    addStylesheetRemote "../../modules/ve/ui/styles/ve.ui.Context.css"
+    addStylesheetRemote "../../modules/ve/ui/styles/ve.ui.Inspector.css"
+    addStylesheetRemote "../../modules/ve/ui/styles/ve.ui.Menu.css"
+    addStylesheetRemote "../../modules/ve/ui/styles/ve.ui.Toolbar.css"
+    addStylesheetRemote "../../modules/sandbox/sandbox.css"
     setTitle "Document"
     $(widgetFile "document")
