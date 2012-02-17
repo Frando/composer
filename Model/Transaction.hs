@@ -10,16 +10,17 @@ import Data.Aeson
 import Control.Applicative ((<$>))
 import Control.Monad (mzero)
 
-data Annotation = Annotation
+data Annotation = Annotation deriving (Eq, Show)
 
-data VEChar = VEChar Char [Annotation]
+data VEChar = VEChar Char [Annotation] deriving (Eq, Show)
 type VEText = [VEChar]
 
 data Operation = Retain Int
                | Insert VEText
                | Delete VEText
+               deriving (Eq, Show)
 
-data Transaction = Transaction Int [Operation]
+data Transaction = Transaction Int [Operation] deriving (Eq, Show)
 
 instance ToJSON Annotation where
   toJSON Annotation = Null

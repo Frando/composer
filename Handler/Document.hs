@@ -13,11 +13,9 @@ import Control.Concurrent.MVar (modifyMVar)
 import Control.Concurrent.Chan (Chan, newChan, dupChan, writeChan)
 import Network.Wai.EventSource (ServerEvent (..), eventSourceApp)
 import qualified Data.Map as M
-import Network.Wai (requestBody)
-import Data.Conduit (runResourceT, ($$))
-import qualified Data.Conduit.List as CL
-import qualified Data.ByteString as BS
-import Blaze.ByteString.Builder.ByteString (fromByteString)
+import Data.Aeson (Result (..), encode)
+import Model.Transaction (Transaction)
+import Blaze.ByteString.Builder.ByteString (fromLazyByteString)
 
 newDocumentForm :: Document -> Html -> MForm Substantial Substantial (FormResult Document, Widget)
 newDocumentForm doc = renderTable $ Document
@@ -160,8 +158,10 @@ postDocumentTransactionsR :: DocumentId -> Handler ()
 postDocumentTransactionsR docid = do
   -- TODO: authorization
   chan <- getTransactionsChan docid
-  req <- waiRequest
-  json <- fmap BS.concat $ liftIO $ runResourceT $ requestBody req $$ CL.consume
-  liftIO $ print json
-  liftIO $ writeChan chan $ ServerEvent Nothing Nothing [fromByteString json]
+  transaction <- parseJsonBody :: Handler (Result Transaction)
+  liftIO $ print transaction
+  case transaction of
+    Error _ -> return ()
+    Success t -> do
+      liftIO $ writeChan chan $ ServerEvent Nothing Nothing [fromLazyByteString $ encode t]
   sendResponseCreated $ DocumentR docid
