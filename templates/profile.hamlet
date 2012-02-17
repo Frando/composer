@@ -1,6 +1,8 @@
 <section#profile>
   <div.page-header>
-    <h1>Your Profile
+    <h1>
+      Your Profile
+      <a.btn.pull-right href="@{UserR userIdentifier}">View public profile</a>
 
   <div.row>
     <div.span3>
