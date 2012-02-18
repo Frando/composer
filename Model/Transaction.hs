@@ -32,6 +32,8 @@ data Operation = Retain Int
 
 data Transaction = Transaction Int [Operation] deriving (Eq, Show)
 
+newtype VEDocument = VEDocument [VEChar]
+
 instance ToJSON Annotation where
   toJSON (Annotation type') = object
     [ "type" .= type'
@@ -129,3 +131,9 @@ instance FromJSON Transaction where
     operations <- o .: "operations"
     return $ Transaction lengthDifference operations 
   parseJSON _ = mzero
+
+instance ToJSON VEDocument where
+  toJSON (VEDocument chs) = toJSON chs
+
+instance FromJSON VEDocument where
+  parseJSON j = VEDocument <$> parseJSON j
