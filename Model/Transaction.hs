@@ -1,6 +1,7 @@
 module Model.Transaction
   ( Operation (..)
   , Transaction (..)
+  , applyTransaction
   ) where
 
 import Prelude
@@ -33,6 +34,22 @@ data Operation = Retain Int
 data Transaction = Transaction Int [Operation] deriving (Eq, Show)
 
 newtype VEDocument = VEDocument [VEChar]
+
+applyTransaction :: VEDocument -> Transaction -> VEDocument
+applyTransaction (VEDocument chars) (Transaction _ operations) = VEDocument $ go operations chars
+  where
+    go :: [Operation] -> [VEChar] -> [VEChar]
+    go [] [] = []
+    go [] _  = error "unretained input"
+    go (Retain 0 : ops) chs = go ops chs
+    go (Retain n : ops) (ch:chs) = ch:(go (Retain (n-1) : ops) chs)
+    go (Retain _ : _) [] = error "no input left to retain"
+    go (Insert [] : ops) chs = go ops chs
+    go (Insert (a:as) : ops) chs = a:(go (Insert as : ops) chs)
+    go (Delete (a:as) : ops) (ch:chs) | a == ch = go (Delete as : ops) chs
+                                      | otherwise = error "Char to delete and actual char don't match"
+    -- TODO: other operations
+    go (_:ops) chs = go ops chs
 
 instance ToJSON Annotation where
   toJSON (Annotation type') = object
