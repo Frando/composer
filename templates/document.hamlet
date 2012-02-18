@@ -13,9 +13,6 @@
 
 <!-- VisualEditor Sandbox -->
 
-<div id="es-docs" style="visibility: hidden">
-  <div id="es-docs-label">Example documents:
-  <ul id="es-docs-list">
 <div id="es-base" style="visibility: hidden">
   <div id="es-toolbar-wrapper">
     <div id="es-toolbar" class="es-toolbar">

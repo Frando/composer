@@ -7,14 +7,16 @@ module Handler.Document
   ) where
 
 import Import
-import Data.Text (pack)
+import Data.Text (pack, unpack)
+import Data.Time (getCurrentTime)
+import Data.Maybe (fromJust)
 import Control.Arrow ((&&&))
 import Control.Concurrent.MVar (modifyMVar)
 import Control.Concurrent.Chan (Chan, newChan, dupChan, writeChan)
 import Network.Wai.EventSource (ServerEvent (..), eventSourceApp)
 import qualified Data.Map as M
 import Data.Aeson (Result (..), encode)
-import Model.Transaction (Transaction)
+import Model.Transaction
 import Blaze.ByteString.Builder.ByteString (fromLazyByteString)
 
 newDocumentForm :: Document -> Html -> MForm Substantial Substantial (FormResult Document, Widget)
@@ -27,15 +29,22 @@ newDocumentForm doc = renderTable $ Document
 defaultDocument :: Document
 defaultDocument = Document "" PublishedVersionsOnly 
 
+defaultContent :: VEDocument
+defaultContent = VEDocument $ [StartTag Paragraph] ++ text ++ [EndTag Paragraph]
+  where
+    text = map (\ch -> VEChar ch []) "Hello World!"
+
 getNewDocumentR :: Handler RepHtml
 getNewDocumentR = do
   uid <- requireAuthId
   ((res, newDocumentFormWidget), encoding) <- runFormPost $ newDocumentForm defaultDocument
   case res of
     FormSuccess doc -> do
+      now <- liftIO $ getCurrentTime
       docid <- runDB $ do
         docid <- insert doc
         _ <- insert $ Permission uid docid Author
+        _ <- insert $ Version docid now (pack . show $ defaultContent)
         return docid
       redirect $ DocumentR docid
     _ -> return ()
@@ -129,35 +138,41 @@ getDocumentR docid = do
     setTitle "Document"
     $(widgetFile "document")
 
-getTransactionsChan :: DocumentId -> Handler (Chan ServerEvent)
-getTransactionsChan docid = do
+getDocumentState :: DocumentId -> Handler (Int, VEDocument, Chan ServerEvent)
+getDocumentState docid = do
   -- TODO: rethink increment of numClient counter
   y <- getYesod
+  -- TODO: run only in case there's no cached state
+  mversion <- runDB $ selectFirst [VersionDocument ==. docid] []
   liftIO $ modifyMVar (documentsMap y) $ \docmap ->
     case M.lookup docid docmap of
       Nothing -> do
         let numClients = 1
-        chan <- newChan
-        let docmap' = M.insert docid (numClients, chan) docmap
-        return $ (docmap', chan)
-      Just (numClients, chan) -> do
+        chan <- liftIO $ newChan
+        let vedoc = read . unpack . versionContent . entityVal . fromJust $ mversion
+        let docstate' = (numClients, vedoc, chan)
+        let docmap' = M.insert docid docstate' docmap
+        return $ (docmap', docstate')
+      Just (numClients, vedoc, chan) -> do
         let numClients' = numClients + 1
-        let docmap' = M.insert docid (numClients', chan) docmap
-        return (docmap', chan)
+        let docstate' = (numClients', vedoc, chan)
+        let docmap' = M.insert docid docstate' docmap
+        return (docmap', docstate')
 
 getDocumentTransactionsR :: DocumentId -> Handler ()
 getDocumentTransactionsR docid = do
   -- TODO: authorization
-  chan <- getTransactionsChan docid
+  (_, vedoc, chan) <- getDocumentState docid
   chanClone <- liftIO $ dupChan chan
   req <- waiRequest
   res <- lift $ eventSourceApp chanClone req
+  liftIO $ writeChan chan $ ServerEvent Nothing Nothing [fromLazyByteString $ encode vedoc]
   sendWaiResponse res
 
 postDocumentTransactionsR :: DocumentId -> Handler ()
 postDocumentTransactionsR docid = do
   -- TODO: authorization
-  chan <- getTransactionsChan docid
+  (_, _, chan) <- getDocumentState docid
   transaction <- parseJsonBody :: Handler (Result Transaction)
   liftIO $ print transaction
   case transaction of

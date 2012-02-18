@@ -34,6 +34,7 @@ import qualified Database.Persist.Store
 import Database.Persist.GenericSql
 import Settings (widgetFile, Extra (..))
 import Model
+import Model.Transaction (VEDocument)
 import Text.Jasmine (minifym)
 import Web.ClientSession (getKey)
 import Text.Hamlet (hamletFile, shamlet)
@@ -57,7 +58,7 @@ data Substantial = Substantial
   , connPool :: Database.Persist.Store.PersistConfigPool Settings.PersistConfig -- ^ Database connection pool.
   , httpManager :: Manager
   , persistConfig :: Settings.PersistConfig
-  , documentsMap :: MVar (M.Map DocumentId (Int, Chan ServerEvent))
+  , documentsMap :: MVar (M.Map DocumentId (Int, VEDocument, Chan ServerEvent))
   }
 
 mkMessage "Substantial" "messages" "en"

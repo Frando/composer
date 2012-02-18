@@ -1,5 +1,9 @@
 module Model.Transaction
-  ( Operation (..)
+  ( Annotation (..)
+  , Element (..)
+  , VEChar (..)
+  , VEDocument (..)
+  , Operation (..)
   , Transaction (..)
   , applyTransaction
   ) where
@@ -13,15 +17,15 @@ import Control.Monad (mzero)
 
 data Annotation = Annotation
   { annotationType :: T.Text
-  } deriving (Eq, Show)
+  } deriving (Eq, Show, Read)
 
 data Element = Paragraph
-             deriving (Eq, Show)
+             deriving (Eq, Show, Read)
 
 data VEChar = VEChar Char [Annotation]
             | StartTag Element
             | EndTag Element
-            deriving (Eq, Show)
+            deriving (Eq, Show, Read)
 type VEText = [VEChar]
 
 data Operation = Retain Int
@@ -29,11 +33,11 @@ data Operation = Retain Int
                | Delete VEText
                | StartAnnotation Annotation
                | StopAnnotation Annotation
-               deriving (Eq, Show)
+               deriving (Eq, Show, Read)
 
-data Transaction = Transaction Int [Operation] deriving (Eq, Show)
+data Transaction = Transaction Int [Operation] deriving (Eq, Show, Read)
 
-newtype VEDocument = VEDocument [VEChar]
+newtype VEDocument = VEDocument [VEChar] deriving (Eq, Show, Read)
 
 applyTransaction :: VEDocument -> Transaction -> VEDocument
 applyTransaction (VEDocument chars) (Transaction _ operations) = VEDocument $ go operations chars

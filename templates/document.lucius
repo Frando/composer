@@ -1,7 +1,3 @@
-#es-docs {
-  display: none;
-}
-
 #es-toolbar-wrapper {
   position: normal;
 }

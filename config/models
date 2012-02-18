@@ -19,6 +19,10 @@ Username
 Document
   title Text
   publishSettings PublishSettings
+Version
+  document DocumentId
+  date UTCTime
+  content Text
 Permission
   user UserId
   document DocumentId
