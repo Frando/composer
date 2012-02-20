@@ -166,6 +166,7 @@ $(document).ready( function() {
     if (data.clientId !== clientId) {
       if (!data.operations) {
         if (!window.surfaceModel) {
+          console.log('initializing with data: ', data);
           init(data);
         }
       } else if (window.surfaceModel) {

@@ -21,8 +21,17 @@ Document
   publishSettings PublishSettings
 Version
   document DocumentId
+  published Bool
+  message Text
+  revision Int
   date UTCTime
   content Text
+Transaction
+  document DocumentId
+  user UserId
+  revision Int
+  date UTCTime
+  change Text
 Permission
   user UserId
   document DocumentId

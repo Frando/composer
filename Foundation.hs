@@ -1,5 +1,6 @@
 module Foundation
-  ( Substantial (..)
+  ( DocumentState
+  , Substantial (..)
   , Route (..)
   , SubstantialMessage (..)
   , resourcesSubstantial
@@ -34,7 +35,7 @@ import qualified Database.Persist.Store
 import Database.Persist.GenericSql
 import Settings (widgetFile, Extra (..))
 import Model
-import Model.Transaction (VEDocument)
+import Model.VisualEditor (VEDocument, VETransaction)
 import Text.Jasmine (minifym)
 import Web.ClientSession (getKey)
 import Text.Hamlet (hamletFile, shamlet)
@@ -51,6 +52,8 @@ import Network.Mail.Mime (renderMail', simpleMail, Mail, Address(..))
 import Network.Mail.Mime (sendmail, renderMail', simpleMail, Mail, Address(..))
 #endif
 
+type DocumentState = (MVar VEDocument, Chan (UserId, VETransaction), Chan ServerEvent)
+
 data Substantial = Substantial
   { settings :: AppConfig DefaultEnv Extra
   , getLogger :: Logger
@@ -58,7 +61,7 @@ data Substantial = Substantial
   , connPool :: Database.Persist.Store.PersistConfigPool Settings.PersistConfig -- ^ Database connection pool.
   , httpManager :: Manager
   , persistConfig :: Settings.PersistConfig
-  , documentsMap :: MVar (M.Map DocumentId (Int, VEDocument, Chan ServerEvent))
+  , documentsMap :: MVar (M.Map DocumentId DocumentState)
   }
 
 mkMessage "Substantial" "messages" "en"

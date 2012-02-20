@@ -30,7 +30,7 @@ library
     other-modules:   Foundation
                      Import
                      Model
-                     Model.Transaction
+                     Model.VisualEditor
                      Settings
                      Settings.StaticFiles
                      Handler.Root

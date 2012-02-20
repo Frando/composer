@@ -7,17 +7,28 @@ module Handler.Document
   ) where
 
 import Import
+import qualified Settings
 import Data.Text (pack, unpack)
 import Data.Time (getCurrentTime)
 import Data.Maybe (fromJust)
 import Control.Arrow ((&&&))
-import Control.Concurrent.MVar (modifyMVar)
-import Control.Concurrent.Chan (Chan, newChan, dupChan, writeChan)
+import Control.Concurrent (forkIO)
+import Control.Concurrent.MVar (modifyMVar_, modifyMVar, newMVar, readMVar)
+import Control.Concurrent.Chan (newChan, dupChan, readChan, writeChan)
 import Network.Wai.EventSource (ServerEvent (..), eventSourceApp)
 import qualified Data.Map as M
 import Data.Aeson (Result (..), encode)
-import Model.Transaction
+import Model.VisualEditor
 import Blaze.ByteString.Builder.ByteString (fromLazyByteString)
+import Database.Persist.Store (PersistConfig (..))
+
+-- TODO: use existential quantification
+type MyRunDB a = PersistConfigBackend Settings.PersistConfig IO a -> IO a
+
+getMyRunDB :: Handler (MyRunDB a)
+getMyRunDB = do
+  y <- getYesod
+  return $ \query -> runPool (persistConfig y) query (connPool y)
 
 newDocumentForm :: Document -> Html -> MForm Substantial Substantial (FormResult Document, Widget)
 newDocumentForm doc = renderTable $ Document
@@ -44,7 +55,8 @@ getNewDocumentR = do
       docid <- runDB $ do
         docid <- insert doc
         _ <- insert $ Permission uid docid Author
-        _ <- insert $ Version docid now (pack . show $ defaultContent)
+        let firstVersion = Version docid False "" 0 now (pack . show $ defaultContent)
+        _ <- insert firstVersion
         return docid
       redirect $ DocumentR docid
     _ -> return ()
@@ -138,32 +150,58 @@ getDocumentR docid = do
     setTitle "Document"
     $(widgetFile "document")
 
-getDocumentState :: DocumentId -> Handler (Int, VEDocument, Chan ServerEvent)
+startDocumentThread :: MyRunDB () -> DocumentId -> Int -> VEDocument -> IO DocumentState
+startDocumentThread myRunDB docid dbRevision initialVedoc = do
+  doc <- newMVar initialVedoc
+  inChan <- newChan
+  outChan <- newChan
+  let loop revision = do
+      let revision' = revision + 1
+      (uid, transaction) <- readChan inChan
+      modifyMVar_ doc $ \vedoc -> do
+        let vedoc' = applyTransaction vedoc transaction
+        print vedoc'
+        return vedoc'
+      now <- getCurrentTime
+      myRunDB $ do
+        _ <- insert $ Transaction docid uid revision' now (pack $ show transaction)
+        return ()
+      writeChan outChan $ ServerEvent Nothing Nothing [fromLazyByteString $ encode transaction]
+      loop $ revision'
+  _ <- forkIO $ loop dbRevision
+  return (doc, inChan, outChan)
+
+getDocumentState :: DocumentId -> Handler DocumentState
 getDocumentState docid = do
-  -- TODO: rethink increment of numClient counter
   y <- getYesod
-  -- TODO: run only in case there's no cached state
-  mversion <- runDB $ selectFirst [VersionDocument ==. docid] []
+  -- Yes, I know, that's not very elegant, but I couldn't get it working with
+  -- ExistentialQuantification.
+  myRunDB1 <- getMyRunDB
+  myRunDB2 <- getMyRunDB
+  myRunDB3 <- getMyRunDB
   liftIO $ modifyMVar (documentsMap y) $ \docmap ->
     case M.lookup docid docmap of
+      Just state -> return (docmap, state)
       Nothing -> do
-        let numClients = 1
-        chan <- liftIO $ newChan
-        let vedoc = read . unpack . versionContent . entityVal . fromJust $ mversion
-        let docstate' = (numClients, vedoc, chan)
-        let docmap' = M.insert docid docstate' docmap
-        return $ (docmap', docstate')
-      Just (numClients, vedoc, chan) -> do
-        let numClients' = numClients + 1
-        let docstate' = (numClients', vedoc, chan)
-        let docmap' = M.insert docid docstate' docmap
-        return (docmap', docstate')
+        mversion <- myRunDB1 $ selectFirst [VersionDocument ==. docid] [Desc VersionRevision]
+        let version = entityVal . fromJust $ mversion
+        let revision = versionRevision version
+        let vedoc = read . unpack . versionContent $ version
+        transactions <- myRunDB3 $ selectList [TransactionRevision >=. revision, TransactionDocument ==. docid] [Asc TransactionRevision]
+        let vedoc' = applyTransactions vedoc $ map entityVal transactions
+        state <- startDocumentThread myRunDB2 docid revision vedoc'
+        let docmap' = M.insert docid state docmap
+        return $ (docmap', state)
+  where
+    applyTransactions :: VEDocument -> [Transaction] -> VEDocument
+    applyTransactions vedoc ts = foldl applyTransaction vedoc $ map (read . unpack . transactionChange) ts
 
 getDocumentTransactionsR :: DocumentId -> Handler ()
 getDocumentTransactionsR docid = do
   -- TODO: authorization
-  (_, vedoc, chan) <- getDocumentState docid
+  (vedocMVar, _, chan) <- getDocumentState docid
   chanClone <- liftIO $ dupChan chan
+  vedoc <- liftIO $ readMVar vedocMVar
   req <- waiRequest
   res <- lift $ eventSourceApp chanClone req
   liftIO $ writeChan chan $ ServerEvent Nothing Nothing [fromLazyByteString $ encode vedoc]
@@ -172,11 +210,12 @@ getDocumentTransactionsR docid = do
 postDocumentTransactionsR :: DocumentId -> Handler ()
 postDocumentTransactionsR docid = do
   -- TODO: authorization
-  (_, _, chan) <- getDocumentState docid
-  transaction <- parseJsonBody :: Handler (Result Transaction)
+  uid <- requireAuthId
+  (_, chan, _) <- getDocumentState docid
+  transaction <- parseJsonBody :: Handler (Result VETransaction)
   liftIO $ print transaction
   case transaction of
     Error _ -> return ()
     Success t -> do
-      liftIO $ writeChan chan $ ServerEvent Nothing Nothing [fromLazyByteString $ encode t]
+      liftIO $ writeChan chan (uid, t)
   sendResponseCreated $ DocumentR docid

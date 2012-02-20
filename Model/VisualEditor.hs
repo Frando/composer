@@ -1,10 +1,10 @@
-module Model.Transaction
+module Model.VisualEditor
   ( Annotation (..)
   , Element (..)
   , VEChar (..)
   , VEDocument (..)
-  , Operation (..)
-  , Transaction (..)
+  , VEOperation (..)
+  , VETransaction (..)
   , applyTransaction
   ) where
 
@@ -28,21 +28,21 @@ data VEChar = VEChar Char [Annotation]
             deriving (Eq, Show, Read)
 type VEText = [VEChar]
 
-data Operation = Retain Int
-               | Insert VEText
-               | Delete VEText
-               | StartAnnotation Annotation
-               | StopAnnotation Annotation
-               deriving (Eq, Show, Read)
+data VEOperation = Retain Int
+                 | Insert VEText
+                 | Delete VEText
+                 | StartAnnotation Annotation
+                 | StopAnnotation Annotation
+                 deriving (Eq, Show, Read)
 
-data Transaction = Transaction Int [Operation] deriving (Eq, Show, Read)
+data VETransaction = VETransaction Int [VEOperation] deriving (Eq, Show, Read)
 
 newtype VEDocument = VEDocument [VEChar] deriving (Eq, Show, Read)
 
-applyTransaction :: VEDocument -> Transaction -> VEDocument
-applyTransaction (VEDocument chars) (Transaction _ operations) = VEDocument $ go operations chars
+applyTransaction :: VEDocument -> VETransaction -> VEDocument
+applyTransaction (VEDocument chars) (VETransaction _ operations) = VEDocument $ go operations chars
   where
-    go :: [Operation] -> [VEChar] -> [VEChar]
+    go :: [VEOperation] -> [VEChar] -> [VEChar]
     go [] [] = []
     go [] _  = error "unretained input"
     go (Retain 0 : ops) chs = go ops chs
@@ -96,10 +96,10 @@ instance FromJSON VEChar where
         let elementText = if isEndTag then T.tail type' else type'
         case elementFromText elementText of
           Nothing -> mzero
-          Just e  -> return $ (if isEndTag then StartTag else EndTag) e
+          Just e  -> return $ (if isEndTag then EndTag else StartTag) e
   parseJSON _ = mzero
 
-instance ToJSON Operation where
+instance ToJSON VEOperation where
   toJSON (Retain n) = object
     [ "type" .= String "retain"
     , "length" .= n
@@ -123,7 +123,7 @@ instance ToJSON Operation where
     , "annotation" .= a
     ]
 
-instance FromJSON Operation where
+instance FromJSON VEOperation where
   parseJSON (Object o) = do
     type' <- o .: "type"
     case type' of
@@ -140,17 +140,17 @@ instance FromJSON Operation where
       _ -> mzero
   parseJSON _ = mzero
 
-instance ToJSON Transaction where
-  toJSON (Transaction sizediff ops) = object
+instance ToJSON VETransaction where
+  toJSON (VETransaction sizediff ops) = object
     [ "lengthDifference" .= sizediff
     , "operations" .= ops
     ]
 
-instance FromJSON Transaction where
+instance FromJSON VETransaction where
   parseJSON (Object o) = do
     lengthDifference <- o .: "lengthDifference"
     operations <- o .: "operations"
-    return $ Transaction lengthDifference operations 
+    return $ VETransaction lengthDifference operations 
   parseJSON _ = mzero
 
 instance ToJSON VEDocument where
