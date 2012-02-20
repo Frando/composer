@@ -14,3 +14,4 @@
 /new-document NewDocumentR GET POST
 /document/#DocumentId DocumentR GET
 /document/#DocumentId/transact DocumentTransactionsR GET POST
+/document/#DocumentId/delete DeleteDocumentR POST

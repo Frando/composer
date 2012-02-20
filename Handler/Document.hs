@@ -2,6 +2,7 @@ module Handler.Document
   ( getNewDocumentR
   , postNewDocumentR
   , getDocumentR
+  , postDeleteDocumentR
   , getDocumentTransactionsR
   , postDocumentTransactionsR
   ) where
@@ -66,6 +67,17 @@ getNewDocumentR = do
 
 postNewDocumentR :: Handler RepHtml
 postNewDocumentR = getNewDocumentR
+
+postDeleteDocumentR :: DocumentId -> Handler ()
+postDeleteDocumentR docid = do
+  -- TODO: authorization
+  runDB $ do
+    deleteWhere [VersionDocument ==. docid]
+    deleteWhere [TransactionDocument ==. docid]
+    deleteWhere [PermissionDocument ==. docid]
+    delete docid
+  setMessage "Deleted document successfully!"
+  redirect RootR
 
 getDocumentR :: DocumentId -> Handler RepHtml
 getDocumentR docid = do
