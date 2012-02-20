@@ -39,7 +39,7 @@ getProfileR = do
   ((_, usernameFormWidget), usernameEnctype) <- generateFormPost $ usernameForm musername
   memail <- runDB $ do
     liftM (fmap $ emailEmail . entityVal) $ selectFirst [EmailUser ==. Just uid] []
-  let userIdentifier = fromMaybe (T.pack $ show uid) musername
+  let userIdentifier = fromMaybe (toPathPiece uid) musername
   defaultLayout $ do
     setTitle "User Profile"
     $(widgetFile "profile")
