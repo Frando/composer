@@ -84,12 +84,18 @@ Sanitizer.prototype._stripIDNs = function ( host ) {
 
 /**
  * Sanitize any tag.
+ *
+ * XXX: Make attribute sanitation reversible by storing round-trip info in
+ * token.dataAttribs object (which is serialized as JSON in a data-mw-rt
+ * attribute in the DOM).
  */
 Sanitizer.prototype.onAny = function ( token ) {
 	// XXX: validate token type according to whitelist and convert non-ok ones
 	// back to text.
 
 	// Convert attributes to string, if necessary.
+	// XXX: Likely better done in AttributeTransformManager when processing is
+	// complete
 	if ( token.attribs ) {
 		for ( var i = 0, l = token.attribs.length; i < l; i++ ) {
 			var kv = token.attribs[i];
@@ -99,10 +105,23 @@ Sanitizer.prototype.onAny = function ( token ) {
 			if ( kv.v.constructor === Array ) {
 				kv.v = this.manager.env.tokensToString ( kv.v );
 			}
+			if ( kv.k === 'style' ) {
+				kv.v = this.checkCss(kv.v);
+			}
 		}
 	}
 	// XXX: Validate attributes
 	return { token: token };
+};
+
+Sanitizer.prototype.checkCss = function ( value ) {
+	if (/[\000-\010\016-\037\177]/.test(value)) {
+		return '/* invalid control char */';
+	}
+	if (/expression|filter\s*:|accelerator\s*:|url\s*\(/i.test(value)) {
+		return '/* insecure input */';
+	}
+	return value;
 };
 
 if (typeof module == "object") {

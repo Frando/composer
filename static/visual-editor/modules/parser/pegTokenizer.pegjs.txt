@@ -38,6 +38,15 @@
 
     
     var flatten_string = function ( c ) {
+        var out = flatten_stringlist( c );
+        if ( out.length === 1 && out[0].constructor === String ) {
+            return out[0];
+        } else {
+            return out;
+        }
+    };
+
+    var flatten_stringlist = function ( c ) {
         var out = [],
             text = [];
         c = flatten(c);
@@ -58,13 +67,8 @@
         if (text.length) {
             out.push( text.join('') );
         }
-
-        if ( out.length === 1 && out[0].constructor === String ) {
-            return out[0];
-        } else {
-            return out;
-        }
-    };
+        return out;
+    }
 
     // Remove escaped quotes from attributes etc
     // This was in the original PEG parser, but could not find anything in
@@ -467,7 +471,7 @@ wikilink_preprocessor_text
   / urlencoded_char
   / directive
   / !inline_breaks !"]]" text_char )+ {
-      return flatten ( r );
+      return flatten_stringlist ( r );
   }
 
 extlink_preprocessor_text
@@ -484,7 +488,7 @@ extlink_preprocessor_text
 attribute_preprocessor_text
   = r:( ts:(!inline_breaks t:[^=<>{\n\r&'"\t ] {return t})+ { return ts.join(''); }
   / directive
-  / !inline_breaks [&%] )* {
+  / !inline_breaks [&%] )+ {
       //console.warn('prep');
       return flatten_string ( r );
   }
@@ -506,7 +510,7 @@ attribute_preprocessor_text_double
 attribute_preprocessor_text_line
   = r:( ts:(!inline_breaks t:[^=<>{\n\r&'"\t ] {return t})+ { return ts.join(''); }
   / directive
-  / !inline_breaks !'\n' [&%] )* {
+  / !inline_breaks !'\n' [&%] )+ {
       //console.warn('prep');
       return flatten_string ( r );
   }
@@ -553,7 +557,8 @@ toplevelblock
   }
 
 block
-  = block_lines
+  = !inline_breaks 
+  r:( block_lines
   / pre
   / comment &eolf
   / nowiki
@@ -568,6 +573,7 @@ block
               return [{type: 'NEWLINE'}]; 
           }
       }*/
+  ) { return r }
 
 block_lines
   = s:sol 
@@ -634,55 +640,14 @@ inline_breaks
 
 inline
   = c:(urltext / (! inline_breaks (inline_element / . )))+ {
-      var out = [];
-      var text = [];
-      c = flatten(c);
-      for (var i = 0, l = c.length; i < l; i++) {
-          var ci = c[i];
-          if (typeof ci === 'string') {
-              if(ci !== '') {
-                text.push(ci);
-              }
-          } else {
-              if (text.length) {
-                  out.push( text.join('') );
-                  text = [];
-              }
-              out.push(ci);
-          }
-      }
-      if (text.length) {
-          out.push( text.join('') );
-      }
       //console.warn('inline out:' + pp(out));
-      return out;
+      return flatten_stringlist( c );
 }
 
 
 inlineline
   = c:(urltext / !inline_breaks (inline_element / [^\n]))+ {
-      var out = [];
-      var text = [];
-      c = flatten(c);
-      for (var i = 0; i < c.length; i++) {
-          var ci = c[i]
-          if (typeof ci == 'string') {
-              if(ci !== '') {
-                text.push(ci);
-              }
-          } else {
-              if (text.length) {
-                  out.push( text.join('') );
-                  text = [];
-              }
-              out.push(ci);
-          }
-      }
-      if (text.length) {
-          out.push( text.join('') );
-      }
-      //dp('inlineline out:' + pp(out));
-      return out;
+      return flatten_stringlist( c );
 }
 
 inline_element
@@ -823,7 +788,13 @@ unicode_separator_space = [ \u00A0\u1680\u180E\u2000-\u200A\u202F\u205F\u3000]
 
 
 urlencoded_char = "%" c0:[0-9a-fA-F] c1:[0-9a-fA-F] { 
-    return decodeURI("%" + c0 + c1) 
+    try {
+        return decodeURI("%" + c0 + c1) 
+    } catch ( e ) {
+        // Reject the match, and allow other fall-back productions to have a
+        // go at it.
+        return null;
+    }
 }
 
 //[^][<>"\\x00-\\x20\\x7F\p{Zs}]
@@ -889,13 +860,18 @@ tplarg
   }
 
 template_param
-  = name:template_param_name space* 
-    value:(  s0:"=" s1:space*
-             //& { console.warn( 'entering value' ); return true }
-             s2:template_param_text { return [s0, s1, s2] } )? {
+  = name:template_param_name 
+    s0:space* 
+    eq:"="?
+    s1:space*
+    value:template_param_text?
+
+    {
       //console.warn( 'named template_param matched' + pp([name, value ]) );
       if ( value !== '' ) {
-        return new KV(name, flatten( value[2] ) || []);
+        return new KV( name, flatten( value ) );
+      } else if ( eq !== '' ) {
+        return new KV(flatten( name ), []);
       } else {
         return new KV([], flatten(name));
       }
@@ -1123,6 +1099,9 @@ generic_attribute
     value:(space*
           v:generic_attribute_value { return v })?
 {
+    //console.warn( 'generic attribute: ' + pp([name, value]));
+    // FIXME: name might just be a template, which can expand to a key-value
+    // pair later. We'll need to handle that in the AttributeTransformManager.
     if ( value !== '' ) {
         return new KV( name, value );
     } else {
@@ -1132,10 +1111,21 @@ generic_attribute
 
 // http://dev.w3.org/html5/spec/Overview.html#attributes-0, and we also
 // disallow newlines, | and {.
-generic_attribute_name
+generic_attribute_plain_name
   = n:[^ \t\0/"'>=\n|{]+ {
         return n.join('');
   }
+
+generic_attribute_name
+  = & { return setFlag( 'equal' ) }
+  ! '/>'
+  name:attribute_preprocessor_text_line
+    {
+        clearFlag( 'equal' );
+        //console.warn( 'generic attribute name: ' + pp( name ) );
+        return name;
+    }
+  / & { return clearFlag( 'equal' ) }
 
 generic_attribute_newline_value
   = "=" (space / newline )* v:xml_att_value { 
@@ -1290,7 +1280,7 @@ table_row_tag
     }
 
 table_data_tags
-  = "|"
+  = pipe
     td:table_data_tag
     tds:( "||" tdt:table_data_tag { return tdt } )* {
         return td.concat(tds);
@@ -1309,7 +1299,7 @@ table_data_tag
         if ( a == '' ) {
             a = [];
         }
-        //dp("table data result: " + pp(td) + ", attribts: " + pp(a));
+        //console.warn("table data result: " + pp(td) + ", attribts: " + pp(a));
         return [ new TagTk( 'td', a )]
                     .concat( td, [ new EndTagTk ( 'td' ) ] );
     }
@@ -1373,7 +1363,7 @@ table
   }
 
 table_start 
-  = "{|"
+  = "{" pipe
     res:(
         & { setFlag('table'); return true; }
         ta:generic_attribute* 
@@ -1386,7 +1376,7 @@ table_start
 
 table_caption 
   = n:newlineToken
-    "|+" c:inline* { 
+    pipe "+" c:inline* { 
         return n.concat(c);
     }
 
@@ -1412,8 +1402,8 @@ table_firstrow
 table_row 
   = //& { dp("table row enter"); return true; }
   n:newlineToken
-    "|-" 
-    a:(as:generic_attribute+ space* "|" !"|" { return as } )?
+    pipe "-" 
+    a:(as:generic_attribute+ space* pipe !pipe { return as } )?
     space* 
     td:(table_data / table_heading)* { 
         return n.concat([ new TagTk( 'tr' )]
@@ -1422,10 +1412,10 @@ table_row
 
 table_data 
   = //& { dp("table_data enter, pos=" + pos + input.substr(pos,10)); return true; }
-	n:("||" { return [] } / nt:newlineToken ("|" / !'!') { return nt }) 
+	n:("||" { return [] } / nt:newlineToken (pipe / !'!') { return nt }) 
     ! [}+-]
     //& { dp('before attrib, pos=' + pos); return true; }
-    a:(as:generic_attribute+ space* "|" !"|" { return as } )?
+    a:(as:generic_attribute+ space* pipe !pipe { return as } )?
     //& { dp('past attrib, pos=' + pos); return true; }
     // use inline_breaks to break on tr etc
     td:(!inline_breaks 
@@ -1441,7 +1431,7 @@ table_data
 
 table_heading
   = n:("!!" { return [] } / nl:newlineToken "!" { return nl }) 
-    a:(as:generic_attribute+ "|" !"|" { return as } )?
+    a:(as:generic_attribute+ pipe !pipe { return as } )?
      c:inline {
          if ( a == '' ) {
              a = [];
@@ -1452,13 +1442,13 @@ table_heading
 
 thtd_attribs
   // In particular, do not match [|\n]
-  = a:(text / ! inline_breaks c:[="':;/,. -] { return c } )+ "|" ! "|" {
+  = a:(text / ! inline_breaks c:[="':;/,. -] { return c } )+ pipe ! pipe {
     return a;
   }
 
 
 table_end 
-  = nt:newlineToken? ( "|}" / eof ) { 
+  = nt:newlineToken? ( pipe "}" / eof ) { 
 	  clearFlag('table'); 
 	  if(nt) 
 		  return nt;
@@ -1466,6 +1456,9 @@ table_end
 		  return [];
   }
 
+
+// Special-case support for those pipe templates
+pipe = "|" / "{{!}}"
 
 /* Tabs do not mix well with the hybrid production syntax */
 /* vim: set filetype=javascript expandtab ts=4 sw=4 cindent : */
