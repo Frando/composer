@@ -3,6 +3,8 @@ module Handler.Document
   , postNewDocumentR
   , getDocumentR
   , deleteDocumentR
+  , getDocumentSettingsR
+  , postDocumentSettingsR
   , getDocumentTransactionsR
   , postDocumentTransactionsR
   ) where
@@ -31,8 +33,8 @@ getMyRunDB = do
   y <- getYesod
   return $ \query -> runPool (persistConfig y) query (connPool y)
 
-newDocumentForm :: Document -> Html -> MForm Substantial Substantial (FormResult Document, Widget)
-newDocumentForm doc = renderTable $ Document
+documentForm :: Document -> Html -> MForm Substantial Substantial (FormResult Document, Widget)
+documentForm doc = renderTable $ Document
   <$> areq textField "Title" (Just $ documentTitle doc)
   <*> areq (radioFieldList publishSettings) "Publish" (Just $ documentPublishSettings doc)
   where
@@ -49,7 +51,7 @@ defaultContent = VEDocument $ [StartTag Paragraph] ++ text ++ [EndTag Paragraph]
 getNewDocumentR :: Handler RepHtml
 getNewDocumentR = do
   uid <- requireAuthId
-  ((res, newDocumentFormWidget), encoding) <- runFormPost $ newDocumentForm defaultDocument
+  ((res, documentFormWidget), encoding) <- runFormPost $ documentForm defaultDocument
   case res of
     FormSuccess doc -> do
       now <- liftIO $ getCurrentTime
@@ -160,6 +162,23 @@ getDocumentR docid = do
     
     setTitle "Document"
     $(widgetFile "document")
+
+getDocumentSettingsR :: DocumentId -> Handler RepHtml
+getDocumentSettingsR docid = do
+  doc <- runDB $ get404 docid
+  ((res, documentFormWidget), encoding) <- runFormPost $ documentForm doc
+  doc' <- case res of
+    FormSuccess doc' -> do
+      runDB $ replace docid doc'
+      setMessage "Updated settings."
+      return doc'
+    _ -> return doc
+  defaultLayout $ do
+    setTitle "Document settings"
+    $(widgetFile "document-settings")
+
+postDocumentSettingsR :: DocumentId -> Handler RepHtml
+postDocumentSettingsR = getDocumentSettingsR
 
 startDocumentThread :: MyRunDB () -> DocumentId -> Int -> VEDocument -> IO DocumentState
 startDocumentThread myRunDB docid dbRevision initialVedoc = do

@@ -131,13 +131,13 @@ instance Yesod Substantial where
   isAuthorized (DocumentR docid) write = case write of
     True -> isAuthor docid
     False -> do
-    authInfos <- getDocumentAuthorizationInfos docid
-    case authInfos of
-      (Private, Nothing) -> return AuthenticationRequired
-      (Private, Just Nothing) -> return $ Unauthorized "You have to ask one of the authors for the permission to view this document."
-      (Private, Just (Just _)) -> return Authorized
-      (PublishedVersionsOnly, _) -> return Authorized 
-      (Public, _) -> return Authorized
+      authInfos <- getDocumentAuthorizationInfos docid
+      case authInfos of
+        (Private, Nothing) -> return AuthenticationRequired
+        (Private, Just Nothing) -> return $ Unauthorized "You have to ask one of the authors for the permission to view this document."
+        (Private, Just (Just _)) -> return Authorized
+        (PublishedVersionsOnly, _) -> return Authorized 
+        (Public, _) -> return Authorized
   isAuthorized (DocumentTransactionsR docid) write = do
     authInfos <- getDocumentAuthorizationInfos docid
     case authInfos of
@@ -155,6 +155,7 @@ instance Yesod Substantial where
     case muid of
       Nothing -> return AuthenticationRequired
       Just _  -> return Authorized
+  isAuthorized (DocumentSettingsR docid) _ = isAuthor docid
   isAuthorized _ _ = return Authorized
 
 instance YesodPersist Substantial where
