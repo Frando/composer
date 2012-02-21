@@ -44,7 +44,7 @@ defaultDocument :: Document
 defaultDocument = Document "" PublishedVersionsOnly 
 
 defaultContent :: VEDocument
-defaultContent = VEDocument $ [StartTag Paragraph] ++ text ++ [EndTag Paragraph]
+defaultContent = VEDocument $ [StartParagraph] ++ text ++ [EndParagraph]
   where
     text = map (\ch -> VEChar ch []) "Hello World!"
 

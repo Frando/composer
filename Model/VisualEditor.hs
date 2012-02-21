@@ -1,6 +1,5 @@
 module Model.VisualEditor
   ( Annotation (..)
-  , Element (..)
   , VEChar (..)
   , VEDocument (..)
   , VEOperation (..)
@@ -12,6 +11,7 @@ import Prelude
 import qualified Data.Text as T
 import qualified Data.Vector as V
 import Data.Aeson
+import Data.Aeson.Types (Parser)
 import Control.Applicative ((<$>))
 import Control.Monad (mzero)
 
@@ -19,12 +19,13 @@ data Annotation = Annotation
   { annotationType :: T.Text
   } deriving (Eq, Show, Read)
 
-data Element = Paragraph
-             deriving (Eq, Show, Read)
-
 data VEChar = VEChar Char [Annotation]
-            | StartTag Element
-            | EndTag Element
+            | StartParagraph
+            | EndParagraph
+            | StartHeading Int
+            | EndHeading
+            | StartPre
+            | EndPre
             deriving (Eq, Show, Read)
 type VEText = [VEChar]
 
@@ -47,7 +48,7 @@ applyTransaction (VEDocument chars) (VETransaction _ operations) = VEDocument $ 
     go [] _  = error "unretained input"
     go (Retain 0 : ops) chs = go ops chs
     go (Retain n : ops) (ch:chs) = ch:(go (Retain (n-1) : ops) chs)
-    go (Retain _ : _) [] = error "no input left to retain"
+    go (Retain _ : _) [] = [] --error "no input left to retain"
     go (Insert [] : ops) chs = go ops chs
     go (Insert (a:as) : ops) chs = a:(go (Insert as : ops) chs)
     go (Delete (a:as) : ops) (ch:chs) | a == ch = go (Delete as : ops) chs
@@ -64,22 +65,16 @@ instance FromJSON Annotation where
   parseJSON (Object o) = Annotation <$> o .: "type"
   parseJSON _ = mzero
 
-elementToText :: Element -> T.Text
-elementToText Paragraph = "paragraph"
-
-elementFromText :: T.Text -> Maybe Element
-elementFromText "paragraph" = Just Paragraph
-elementFromText _ = Nothing
-
 instance ToJSON VEChar where
   toJSON (VEChar ch []) = toJSON ch
   toJSON (VEChar ch as) = toJSON $ (toJSON ch):(map toJSON as)
-  toJSON (StartTag e) = object
-    [ "type" .= elementToText e
-    ]
-  toJSON (EndTag e) = object
-    [ "type" .= T.cons '/' (elementToText e)
-    ]
+  toJSON StartParagraph = object [ "type" .= String "paragraph" ]
+  toJSON EndParagraph   = object [ "type" .= String "/paragraph" ]
+  toJSON (StartHeading l) = object
+    [ "type" .= String "heading", "attributes" .= object [ "level" .= l ] ]
+  toJSON EndHeading = object [ "type" .= String "/heading" ]
+  toJSON StartPre = object [ "type" .= String "pre" ]
+  toJSON EndPre   = object [ "type" .= String "/pre" ]
 
 instance FromJSON VEChar where
   parseJSON (Array a) | not (V.null a) = do
@@ -89,14 +84,21 @@ instance FromJSON VEChar where
   parseJSON (String s) = (\ch -> VEChar ch []) <$> parseJSON (String s)
   parseJSON (Object o) = do
     type' <- o .: "type"
-    if T.null type'
-      then mzero
-      else do
-        let isEndTag = T.head type' == '/'
-        let elementText = if isEndTag then T.tail type' else type'
-        case elementFromText elementText of
-          Nothing -> mzero
-          Just e  -> return $ (if isEndTag then EndTag else StartTag) e
+    case type' :: T.Text of
+      "paragraph" -> return StartParagraph
+      "/paragraph" -> return EndParagraph
+      "heading" -> StartHeading <$> attribute "level"
+      "/heading" -> return EndHeading
+      "pre" -> return StartPre
+      "/pre" -> return EndPre
+      _ -> mzero
+    where
+      attribute :: FromJSON a => T.Text -> Parser a
+      attribute attr = do
+        attributes <- o .: "attributes"
+        case attributes of
+          Object oo -> oo .: attr
+          _         -> mzero 
   parseJSON _ = mzero
 
 instance ToJSON VEOperation where
