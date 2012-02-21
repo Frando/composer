@@ -19,6 +19,10 @@ data Annotation = Annotation
   { annotationType :: T.Text
   } deriving (Eq, Show, Read)
 
+data ListStyle = Bullet
+               | ListNumber
+               deriving (Eq, Show, Read)
+
 data VEChar = VEChar Char [Annotation]
             | StartParagraph
             | EndParagraph
@@ -26,6 +30,10 @@ data VEChar = VEChar Char [Annotation]
             | EndHeading
             | StartPre
             | EndPre
+            | StartList
+            | EndList
+            | StartListItem [ListStyle]
+            | EndListItem
             deriving (Eq, Show, Read)
 type VEText = [VEChar]
 
@@ -65,6 +73,17 @@ instance FromJSON Annotation where
   parseJSON (Object o) = Annotation <$> o .: "type"
   parseJSON _ = mzero
 
+instance ToJSON ListStyle where
+  toJSON Bullet = String "bullet"
+  toJSON ListNumber = String "number"
+
+instance FromJSON ListStyle where
+  parseJSON (String s) = case s of
+    "bullet" -> return Bullet
+    "number" -> return ListNumber
+    _        -> mzero
+  parseJSON _ = mzero
+
 instance ToJSON VEChar where
   toJSON (VEChar ch []) = toJSON ch
   toJSON (VEChar ch as) = toJSON $ (toJSON ch):(map toJSON as)
@@ -75,6 +94,11 @@ instance ToJSON VEChar where
   toJSON EndHeading = object [ "type" .= String "/heading" ]
   toJSON StartPre = object [ "type" .= String "pre" ]
   toJSON EndPre   = object [ "type" .= String "/pre" ]
+  toJSON StartList = object [ "type" .= String "list" ]
+  toJSON EndList   = object [ "type" .= String "/list" ]
+  toJSON (StartListItem ls) = object
+    [ "type" .= String "listItem", "attributes" .= object [ "styles" .= ls ] ]
+  toJSON EndListItem = object [ "type" .= String "/listItem" ]
 
 instance FromJSON VEChar where
   parseJSON (Array a) | not (V.null a) = do
@@ -91,6 +115,10 @@ instance FromJSON VEChar where
       "/heading" -> return EndHeading
       "pre" -> return StartPre
       "/pre" -> return EndPre
+      "list" -> return StartList
+      "/list" -> return EndList
+      "listItem" -> StartListItem <$> attribute "styles"
+      "/listItem" -> return EndListItem
       _ -> mzero
     where
       attribute :: FromJSON a => T.Text -> Parser a
