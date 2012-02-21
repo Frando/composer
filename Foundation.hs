@@ -1,5 +1,6 @@
 module Foundation
-  ( DocumentState
+  ( DocumentThreadMsg (..)
+  , DocumentState
   , Substantial (..)
   , Route (..)
   , SubstantialMessage (..)
@@ -52,7 +53,8 @@ import Network.Mail.Mime (renderMail', simpleMail, Mail, Address(..))
 import Network.Mail.Mime (sendmail, renderMail', simpleMail, Mail, Address(..))
 #endif
 
-type DocumentState = (MVar VEDocument, Chan (UserId, VETransaction), Chan ServerEvent)
+data DocumentThreadMsg = NewTransaction UserId VETransaction
+type DocumentState = (MVar VEDocument, Chan DocumentThreadMsg, Chan ServerEvent)
 
 data Substantial = Substantial
   { settings :: AppConfig DefaultEnv Extra
@@ -70,8 +72,25 @@ mkYesodData "Substantial" $(parseRoutesFile "config/routes")
 
 type Form x = Html -> MForm Substantial Substantial (FormResult x, Widget)
 
--- Please see the documentation for the Yesod typeclass. There are a number
--- of settings which can be configured by overriding methods here.
+getDocumentAuthorizationInfos :: DocumentId -> GHandler sub Substantial (PublishSettings, Maybe (Maybe Role))
+getDocumentAuthorizationInfos docid = do
+  doc <- runDB $ get404 docid
+  let publishSettings = documentPublishSettings doc
+  muid <- maybeAuthId
+  case muid of
+    Nothing -> return (publishSettings, Nothing)
+    Just uid -> do
+      mpermission <- runDB $ getBy $ UniqueUserDocument uid docid
+      return (publishSettings, Just $ fmap (permissionRole . entityVal) mpermission)
+
+isAuthor :: DocumentId -> GHandler sub Substantial AuthResult
+isAuthor docid = do
+  (_, mmpermission) <- getDocumentAuthorizationInfos docid
+  case mmpermission of
+    Nothing -> return AuthenticationRequired
+    Just (Just Author) -> return Authorized
+    Just _ -> return $ Unauthorized "Only the author of this document may change this."
+
 instance Yesod Substantial where
   approot = ApprootMaster $ appRoot . settings
 
@@ -109,19 +128,28 @@ instance Yesod Substantial where
 
   yepnopeJs _ = Just $ Right $ StaticR js_modernizr_js
 
-  isAuthorized (DocumentR docid) _ = do
-    doc <- runDB $ get404 docid
-    case documentPublishSettings doc of
-      Private -> do
-        muid <- maybeAuthId
-        case muid of
-          Nothing -> return AuthenticationRequired
-          Just uid -> do
-            mpermission <- runDB $ getBy $ UniqueUserDocument uid docid
-            case mpermission of
-              Nothing -> return $ Unauthorized "You have to ask one of the authors for the permission to view this document."
-              Just _ -> return Authorized
-      _ -> return Authorized 
+  isAuthorized (DocumentR docid) write = case write of
+    True -> isAuthor docid
+    False -> do
+    authInfos <- getDocumentAuthorizationInfos docid
+    case authInfos of
+      (Private, Nothing) -> return AuthenticationRequired
+      (Private, Just Nothing) -> return $ Unauthorized "You have to ask one of the authors for the permission to view this document."
+      (Private, Just (Just _)) -> return Authorized
+      (PublishedVersionsOnly, _) -> return Authorized 
+      (Public, _) -> return Authorized
+  isAuthorized (DocumentTransactionsR docid) write = do
+    authInfos <- getDocumentAuthorizationInfos docid
+    case authInfos of
+      (Public, _) | not write -> return Authorized
+      (_, Just (Just Author)) -> return Authorized
+      (_, Just (Just Collaborator)) -> return Authorized
+      (_, Just (Just Reviewer)) | not write -> return Authorized
+                                | otherwise -> return $ Unauthorized "Reviewers cannot make changes to a document."
+      (_, Nothing) -> return AuthenticationRequired
+      (_, Just _) -> return $ Unauthorized $ if write
+                       then "You need the permission of one of the authors to write to this document."
+                       else "You need the permission of one of authors to see changes to this document live."
   isAuthorized _ _ = return Authorized
 
 instance YesodPersist Substantial where

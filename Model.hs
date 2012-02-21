@@ -12,7 +12,9 @@ data PublishSettings = Public
   deriving (Show, Read, Eq, Enum, Bounded)
 derivePersistField "PublishSettings"
 
-data Role = Author | Collaborator | Reviewer
+data Role = Author
+          | Collaborator
+          | Reviewer
   deriving (Show, Read, Eq, Enum, Bounded)
 derivePersistField "Role"
 

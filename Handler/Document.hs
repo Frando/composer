@@ -2,7 +2,7 @@ module Handler.Document
   ( getNewDocumentR
   , postNewDocumentR
   , getDocumentR
-  , postDeleteDocumentR
+  , deleteDocumentR
   , getDocumentTransactionsR
   , postDocumentTransactionsR
   ) where
@@ -68,9 +68,8 @@ getNewDocumentR = do
 postNewDocumentR :: Handler RepHtml
 postNewDocumentR = getNewDocumentR
 
-postDeleteDocumentR :: DocumentId -> Handler ()
-postDeleteDocumentR docid = do
-  -- TODO: authorization
+deleteDocumentR :: DocumentId -> Handler ()
+deleteDocumentR docid = do
   runDB $ do
     deleteWhere [VersionDocument ==. docid]
     deleteWhere [TransactionDocument ==. docid]
@@ -168,18 +167,20 @@ startDocumentThread myRunDB docid dbRevision initialVedoc = do
   inChan <- newChan
   outChan <- newChan
   let loop revision = do
-      let revision' = revision + 1
-      (uid, transaction) <- readChan inChan
-      modifyMVar_ doc $ \vedoc -> do
-        let vedoc' = applyTransaction vedoc transaction
-        print vedoc'
-        return vedoc'
-      now <- getCurrentTime
-      myRunDB $ do
-        _ <- insert $ Transaction docid uid revision' now (pack $ show transaction)
-        return ()
-      writeChan outChan $ ServerEvent Nothing Nothing [fromLazyByteString $ encode transaction]
-      loop $ revision'
+      msg <- readChan inChan
+      case msg of
+        NewTransaction uid transaction -> do
+          let revision' = revision + 1
+          modifyMVar_ doc $ \vedoc -> do
+            let vedoc' = applyTransaction vedoc transaction
+            print vedoc'
+            return vedoc'
+          now <- getCurrentTime
+          myRunDB $ do
+            _ <- insert $ Transaction docid uid revision' now (pack $ show transaction)
+            return ()
+          writeChan outChan $ ServerEvent Nothing Nothing [fromLazyByteString $ encode transaction]
+          loop $ revision'
   _ <- forkIO $ loop dbRevision
   return (doc, inChan, outChan)
 
@@ -210,7 +211,6 @@ getDocumentState docid = do
 
 getDocumentTransactionsR :: DocumentId -> Handler ()
 getDocumentTransactionsR docid = do
-  -- TODO: authorization
   (vedocMVar, _, chan) <- getDocumentState docid
   chanClone <- liftIO $ dupChan chan
   vedoc <- liftIO $ readMVar vedocMVar
@@ -221,7 +221,6 @@ getDocumentTransactionsR docid = do
 
 postDocumentTransactionsR :: DocumentId -> Handler ()
 postDocumentTransactionsR docid = do
-  -- TODO: authorization
   uid <- requireAuthId
   (_, chan, _) <- getDocumentState docid
   transaction <- parseJsonBody :: Handler (Result VETransaction)
@@ -229,5 +228,5 @@ postDocumentTransactionsR docid = do
   case transaction of
     Error _ -> return ()
     Success t -> do
-      liftIO $ writeChan chan (uid, t)
+      liftIO $ writeChan chan $ NewTransaction uid t
   sendResponseCreated $ DocumentR docid

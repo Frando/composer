@@ -12,6 +12,5 @@
 /profile/set-username SetUsernameR POST
 
 /new-document NewDocumentR GET POST
-/document/#DocumentId DocumentR GET
+/document/#DocumentId DocumentR GET DELETE
 /document/#DocumentId/transact DocumentTransactionsR GET POST
-/document/#DocumentId/delete DeleteDocumentR POST
