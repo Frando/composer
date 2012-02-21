@@ -101,7 +101,6 @@ getDocumentR docid = do
     addStylesheetRemote "/static/visual-editor/modules/ve/ui/styles/ve.ui.Toolbar.css"
     addStylesheetRemote "/static/visual-editor/modules/sandbox/sandbox.css"
     
-    addScriptRemote "/static/visual-editor/modules/jquery/jquery.js"
     addScriptRemote "/static/visual-editor/modules/ve/ve.js"
     addScriptRemote "/static/visual-editor/modules/ve/ve.Position.js"
     addScriptRemote "/static/visual-editor/modules/ve/ve.Range.js"

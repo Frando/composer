@@ -8,3 +8,4 @@
         <div.form-actions>
           <button.btn.btn-primary type="submit">Update</button>
     <div.span6>
+      <button#delete-button.btn.btn-danger>Delete document</button>

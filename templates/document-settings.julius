@@ -1,0 +1,15 @@
+$(document).ready(function () {
+  var deleteR = '@{DocumentR docid}';
+  var rootR = '@{RootR}';
+  $('#delete-button').click(function () {
+    if (window.confirm("Are you sure that you want to delete this document and all its versions?")) {
+      $.ajax({
+        url: deleteR,
+        type: "DELETE",
+        success: function () {
+          window.location = rootR;
+        }
+      });
+    }
+  });
+});

@@ -106,6 +106,7 @@ instance Yesod Substantial where
 
     pc <- widgetToPageContent $ do
       addStylesheet $ StaticR bootstrap_css_bootstrap_css
+      addScript $ StaticR js_jquery_min_js
       $(widgetFile "default-layout")
     hamletToRepHtml $(hamletFile "templates/default-layout-wrapper.hamlet")
 
