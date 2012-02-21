@@ -150,6 +150,11 @@ instance Yesod Substantial where
       (_, Just _) -> return $ Unauthorized $ if write
                        then "You need the permission of one of the authors to write to this document."
                        else "You need the permission of one of authors to see changes to this document live."
+  isAuthorized NewDocumentR _ = do
+    muid <- maybeAuthId
+    case muid of
+      Nothing -> return AuthenticationRequired
+      Just _  -> return Authorized
   isAuthorized _ _ = return Authorized
 
 instance YesodPersist Substantial where

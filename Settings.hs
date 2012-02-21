@@ -4,13 +4,13 @@
 -- by overriding methods in the Yesod typeclass. That instance is
 -- declared in the Foundation.hs file.
 module Settings
-    ( widgetFile
-    , PersistConfig
-    , staticRoot
-    , staticDir
-    , Extra (..)
-    , parseExtra
-    ) where
+  ( widgetFile
+  , PersistConfig
+  , staticRoot
+  , staticDir
+  , Extra (..)
+  , parseExtra
+  ) where
 
 import Prelude
 import Text.Shakespeare.Text (st)
@@ -60,11 +60,11 @@ widgetFile = Yesod.Default.Util.widgetFileNoReload
 #endif
 
 data Extra = Extra
-    { extraCopyright :: Text
-    , extraAnalytics :: Maybe Text -- ^ Google Analytics
-    } deriving Show
+  { extraCopyright :: Text
+  , extraAnalytics :: Maybe Text -- ^ Google Analytics
+  } deriving Show
 
 parseExtra :: DefaultEnv -> Object -> Parser Extra
 parseExtra _ o = Extra
-    <$> o .:  "copyright"
-    <*> o .:? "analytics"
+  <$> o .:  "copyright"
+  <*> o .:? "analytics"
