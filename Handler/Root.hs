@@ -5,5 +5,5 @@ import Import
 getRootR :: Handler RepHtml
 getRootR = do
   defaultLayout $ do
-    setTitle "substantial homepage"
+    setTitle "Composer homepage"
     $(widgetFile "homepage")

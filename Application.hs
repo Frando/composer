@@ -1,8 +1,8 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Application
-    ( getApplication
-    , getApplicationDev
-    ) where
+  ( getApplication
+  , getApplicationDev
+  ) where
 
 import Import
 import Settings
@@ -30,7 +30,7 @@ import Handler.User
 import Handler.Profile
 import Handler.Document
 
-mkYesodDispatch "Substantial" resourcesSubstantial
+mkYesodDispatch "Composer" resourcesComposer
 
 -- This function allocates resources (such as a database connection pool),
 -- performs initialization and creates a WAI application. This is also the
@@ -38,17 +38,17 @@ mkYesodDispatch "Substantial" resourcesSubstantial
 -- migrations handled by Yesod.
 getApplication :: AppConfig DefaultEnv Extra -> Logger -> IO Application
 getApplication conf logger = do
-    manager <- newManager def
-    s <- staticSite
-    dbconf <- withYamlEnvironment "config/sqlite.yml" (appEnv conf)
-              Database.Persist.Store.loadConfig >>=
-              Database.Persist.Store.applyEnv
-    p <- Database.Persist.Store.createPoolConfig (dbconf :: Settings.PersistConfig)
-    Database.Persist.Store.runPool dbconf (runMigration migrateAll) p
-    documents <- newMVar M.empty
-    let foundation = Substantial conf setLogger s p manager dbconf documents
-    app <- toWaiAppPlain foundation
-    return $ logWare app
+  manager <- newManager def
+  s <- staticSite
+  dbconf <- withYamlEnvironment "config/sqlite.yml" (appEnv conf)
+            Database.Persist.Store.loadConfig >>=
+            Database.Persist.Store.applyEnv
+  p <- Database.Persist.Store.createPoolConfig (dbconf :: Settings.PersistConfig)
+  Database.Persist.Store.runPool dbconf (runMigration migrateAll) p
+  documents <- newMVar M.empty
+  let foundation = Composer conf setLogger s p manager dbconf documents
+  app <- toWaiAppPlain foundation
+  return $ logWare app
   where
 #ifdef DEVELOPMENT
     logWare = logCallbackDev (logBS setLogger)
@@ -61,8 +61,8 @@ getApplication conf logger = do
 -- for yesod devel
 getApplicationDev :: IO (Int, Application)
 getApplicationDev =
-    defaultDevelApp loader getApplication
+  defaultDevelApp loader getApplication
   where
     loader = loadConfig (configSettings Development)
-        { csParseExtra = parseExtra
-        }
+      { csParseExtra = parseExtra
+      }

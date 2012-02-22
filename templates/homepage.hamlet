@@ -3,10 +3,10 @@
 
 <div.row>
   <div.span6>
-    <p>Substantial is a fully web-based document authoring and publishing platform.
-    <p>With Substantial, <strong>writers</strong>, <strong>journalists</strong>, <strong>scientists</strong> and everyone else who's interested in publishing can use an open platform for writing and sharing articles.
+    <p>Substance is a fully web-based document authoring and publishing platform.
+    <p>With Substance, <strong>writers</strong>, <strong>journalists</strong>, <strong>scientists</strong> and everyone else who's interested in publishing can use an open platform for writing and sharing articles.
     <p>Document authoring used to take place in word processors on the Desktop like <a href="http://office.microsoft.com/word/">MS Word</a> or <a href="http://openoffice.org/">Open Office</a>. We believe that today this can all be be done in the browser, in a simpler, more collaborative way.
-    <p>Substantial is <a href="http://github.com/timjb/substantial">Open Source Software</a> and licensed under <a href="https://github.com/michael/substance/blob/master/LICENSE">GPLv3</a>. (todo: not yet actually)
+    <p>Substance is <a href="http://github.com/substance/composer">Open Source Software</a> and licensed under <a href="https://github.com/michael/substance/blob/master/LICENSE">GPLv3</a>. (todo: not yet actually)
   <div.span6>
     <h2>Semantic Editing
     <p>Unlike traditional word-processors, Substance focuses on content, by leaving the layout part to the system, not the user. Because of the absence of formatting utilities, it suggests structured, content-oriented writing.

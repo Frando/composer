@@ -1,10 +1,10 @@
 module Foundation
   ( DocumentThreadMsg (..)
   , DocumentState
-  , Substantial (..)
+  , Composer (..)
   , Route (..)
-  , SubstantialMessage (..)
-  , resourcesSubstantial
+  , ComposerMessage (..)
+  , resourcesComposer
   , Handler
   , Widget
   , Form
@@ -56,7 +56,7 @@ import Network.Mail.Mime (sendmail, renderMail', simpleMail, Mail, Address(..))
 data DocumentThreadMsg = NewTransaction UserId VETransaction
 type DocumentState = (MVar VEDocument, Chan DocumentThreadMsg, Chan ServerEvent)
 
-data Substantial = Substantial
+data Composer = Composer
   { settings :: AppConfig DefaultEnv Extra
   , getLogger :: Logger
   , getStatic :: Static -- ^ Settings for static file serving.
@@ -66,13 +66,13 @@ data Substantial = Substantial
   , documentsMap :: MVar (M.Map DocumentId DocumentState)
   }
 
-mkMessage "Substantial" "messages" "en"
+mkMessage "Composer" "messages" "en"
 
-mkYesodData "Substantial" $(parseRoutesFile "config/routes")
+mkYesodData "Composer" $(parseRoutesFile "config/routes")
 
-type Form x = Html -> MForm Substantial Substantial (FormResult x, Widget)
+type Form x = Html -> MForm Composer Composer (FormResult x, Widget)
 
-getDocumentAuthorizationInfos :: DocumentId -> GHandler sub Substantial (PublishSettings, Maybe (Maybe Role))
+getDocumentAuthorizationInfos :: DocumentId -> GHandler sub Composer (PublishSettings, Maybe (Maybe Role))
 getDocumentAuthorizationInfos docid = do
   doc <- runDB $ get404 docid
   let publishSettings = documentPublishSettings doc
@@ -83,7 +83,7 @@ getDocumentAuthorizationInfos docid = do
       mpermission <- runDB $ getBy $ UniqueUserDocument uid docid
       return (publishSettings, Just $ fmap (permissionRole . entityVal) mpermission)
 
-isAuthor :: DocumentId -> GHandler sub Substantial AuthResult
+isAuthor :: DocumentId -> GHandler sub Composer AuthResult
 isAuthor docid = do
   (_, mmpermission) <- getDocumentAuthorizationInfos docid
   case mmpermission of
@@ -91,7 +91,7 @@ isAuthor docid = do
     Just (Just Author) -> return Authorized
     Just _ -> return $ Unauthorized "Only the author of this document may change this."
 
-instance Yesod Substantial where
+instance Yesod Composer where
   approot = ApprootMaster $ appRoot . settings
 
   encryptKey _ = fmap Just $ getKey "config/client_session_key.aes"
@@ -159,8 +159,8 @@ instance Yesod Substantial where
   isAuthorized (DocumentSettingsR docid) _ = isAuthor docid
   isAuthorized _ _ = return Authorized
 
-instance YesodPersist Substantial where
-  type YesodPersistBackend Substantial = SqlPersist
+instance YesodPersist Composer where
+  type YesodPersistBackend Composer = SqlPersist
   runDB f = do
     master <- getYesod
     Database.Persist.Store.runPool
@@ -168,8 +168,8 @@ instance YesodPersist Substantial where
       f
       (connPool master)
 
-instance YesodAuth Substantial where
-  type AuthId Substantial = UserId
+instance YesodAuth Composer where
+  type AuthId Composer = UserId
 
   redirectToReferer _ = True
   loginDest _ = RootR
@@ -186,8 +186,8 @@ instance YesodAuth Substantial where
 
   authHttpManager = httpManager
 
-instance YesodAuthEmail Substantial where
-  type AuthEmailId Substantial = EmailId
+instance YesodAuthEmail Composer where
+  type AuthEmailId Composer = EmailId
 
   addUnverified email verkey = do
     runDB $ insert $ Email email Nothing (Just verkey)
@@ -201,7 +201,7 @@ instance YesodAuthEmail Substantial where
       subject = "Verify your email address"
       plain = "" -- TODO
       html = renderHtml [shamlet|
-<p>Activate your Substantial account by clicking on the link below.
+<p>Activate your Substance account by clicking on the link below.
 <p>
   <a href="#{verurl}">#{verurl}
 |]
@@ -264,7 +264,7 @@ mkUser ident = User
   , userPassword = Nothing
   }
 
-getUserIdentifier :: UserId -> User -> GHandler sub Substantial Text
+getUserIdentifier :: UserId -> User -> GHandler sub Composer Text
 getUserIdentifier uid user = case userFullName user of
   Just fullName -> return fullName
   Nothing -> do
@@ -275,18 +275,18 @@ getUserIdentifier uid user = case userFullName user of
     
 
 emailFrom :: Address
-emailFrom = Address Nothing "noreply@substantial.io"
+emailFrom = Address Nothing "noreply@substance.io"
 
-renderSendMail :: Substantial -> Mail -> IO ()
+renderSendMail :: Composer -> Mail -> IO ()
 renderSendMail s m = renderMail' m >>= deliver s
 
 -- Sends off your mail. Requires sendmail in production!
-deliver :: Substantial -> L.ByteString -> IO ()
+deliver :: Composer -> L.ByteString -> IO ()
 #ifdef DEVELOPMENT
 deliver y = logLazyText (getLogger y) . Data.Text.Lazy.Encoding.decodeUtf8
 #else
 deliver _ = sendmail
 #endif
 
-instance RenderMessage Substantial FormMessage where
+instance RenderMessage Composer FormMessage where
   renderMessage _ _ = defaultFormMessage

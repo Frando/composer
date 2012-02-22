@@ -1,7 +1,7 @@
 <div.navbar.navbar-fixed-top>
   <div.navbar-inner>
     <div.container>
-      <a.brand href="@{RootR}">Substantial
+      <a.brand href="@{RootR}">Composer
       <ul.nav>
         $maybe _ <- mauth
           <li>

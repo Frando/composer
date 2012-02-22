@@ -11,7 +11,7 @@ import Data.Char (isAlpha, isAlphaNum)
 import Helper.Gravatar (maybeGravatar)
 import Data.Maybe (fromMaybe)
 
-userForm :: User -> Html -> MForm Substantial Substantial (FormResult User, Widget)
+userForm :: User -> Html -> MForm Composer Composer (FormResult User, Widget)
 userForm user = renderTable $ User
   <$> pure (userIdent user)
   <*> aopt textField "Full name" (Just $ userFullName user)
@@ -20,7 +20,7 @@ userForm user = renderTable $ User
   <*> aopt textField "Location" (Just $ userLocation user)
   <*> pure (userPassword user)
 
-usernameForm :: Maybe Text -> Html -> MForm Substantial Substantial (FormResult Text, Widget)
+usernameForm :: Maybe Text -> Html -> MForm Composer Composer (FormResult Text, Widget)
 usernameForm musername = renderTable $
   areq (checkBool isValidUsername  ("Not a valid username" :: Text) textField) "Username" musername
 

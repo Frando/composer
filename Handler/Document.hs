@@ -33,7 +33,7 @@ getMyRunDB = do
   y <- getYesod
   return $ \query -> runPool (persistConfig y) query (connPool y)
 
-documentForm :: Document -> Html -> MForm Substantial Substantial (FormResult Document, Widget)
+documentForm :: Document -> Html -> MForm Composer Composer (FormResult Document, Widget)
 documentForm doc = renderTable $ Document
   <$> areq textField "Title" (Just $ documentTitle doc)
   <*> areq (radioFieldList publishSettings) "Publish" (Just $ documentPublishSettings doc)

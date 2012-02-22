@@ -1,5 +1,5 @@
 {-# LANGUAGE PackageImports #-}
-import "substantial" Application (getApplicationDev)
+import "composer" Application (getApplicationDev)
 import Network.Wai.Handler.Warp
     (runSettings, defaultSettings, settingsPort)
 import Control.Concurrent (forkIO)

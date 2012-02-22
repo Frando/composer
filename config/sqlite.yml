@@ -1,20 +1,20 @@
 Default: &defaults
-  database: substantial.sqlite3
+  database: composer.sqlite3
   poolsize: 10
 
 Development:
   <<: *defaults
 
 Test:
-  database: substantial_test.sqlite3
+  database: composer_test.sqlite3
   <<: *defaults
 
 Staging:
-  database: substantial_staging.sqlite3
+  database: composer_staging.sqlite3
   poolsize: 100
   <<: *defaults
 
 Production:
-  database: substantial_production.sqlite3
+  database: composer_production.sqlite3
   poolsize: 100
   <<: *defaults
