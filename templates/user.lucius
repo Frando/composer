@@ -1,6 +1,0 @@
-#user .page-header h1 {
-  line-height: 40px;
-  * {
-    vertical-align: middle;
-  }
-}
