@@ -1,0 +1,6 @@
+[submodule "javascripts/visual-editor"]
+	path = javascripts/visual-editor
+	url = git@github.com:substance/visual-editor.git
+[submodule "javascripts/ot"]
+	path = javascripts/ot
+	url = git@github.com:substance/ot.git
