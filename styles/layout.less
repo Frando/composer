@@ -1,0 +1,92 @@
+/* Variables
+-------------------------------------------------------------------------------*/
+
+
+@background: #842210;
+
+
+/* Common styles
+-------------------------------------------------------------------------------*/
+
+html, body {
+  height: 100%;
+}
+
+html {
+  margin: 0; padding: 0; 
+  -webkit-font-smoothing: antialiased;
+}
+
+img { border: none; }
+
+body { 
+  .ui-font;
+  min-width: 1200px;
+  font-size: 14px;
+  margin: 0; padding: 0;
+  background: #F0F1EB;
+  color:#444;
+  line-height:1.5em;
+}
+
+a {
+  text-decoration:none;
+  color: #51483D;
+  border-bottom: 1px solid #ccc;
+  padding: 0 0 1px 0;
+}
+
+a:hover {
+  color: #000;
+  border-bottom: 1px solid #999;
+}
+
+
+p { margin: 0 0 10px 0; }
+p.info {
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+h1, h2, h3, h4, h5, h6 { padding: 10px 0 5px 0; }
+h3, h4, h5, h6 { padding-top: 20px; }
+h2 { font-size: 160%; padding-bottom: 15px; }
+
+
+/* Helpers
+-------------------------------------------------------------------------------*/
+
+* {
+  box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+  -moz-box-sizing:border-box;
+}
+
+.clear { clear: both; }
+.hidden { display: none; }
+.invisible { opacity: 0; }
+.right { float: right; }
+.left { float: left; }
+.nobr {white-space: nowrap} 
+.right-align {text-align: right; }
+
+.serif {
+  .document-font;
+}
+
+.italic {
+  font-style: italic;
+}
+
+
+/* body > #container
+-------------------------------------------------------------------------------*/
+
+#container { 
+  min-height: 100%;
+  padding-bottom: 180px;
+}
+
+#main {
+  padding-top: 35px;
+}

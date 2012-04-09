@@ -1,0 +1,40 @@
+{
+  "scripts": {
+    "development": [
+      "/javascripts/jquery.min.js",
+      "/javascripts/jquery.transloadit2.js",
+      "/javascripts/jquery.hotkeys.js",
+      "/javascripts/jquery.timeago.js",
+      "/javascripts/chosen.jquery.min.js",
+      "/javascripts/underscore.js",
+      "/lib/data/data.js",
+      "/lib/dance/dance.js"
+    ],
+    "production": [
+      "/javascripts/jquery.min.js",
+      "/javascripts/jquery.transloadit2.js",
+      "/javascripts/jquery.hotkeys.js",
+      "/javascripts/jquery.timeago.js",
+      "/javascripts/chosen.jquery.min.js",
+      "/javascripts/underscore.js",
+      "/lib/data/data.js",
+      "/lib/dance/dance.js"
+    ],
+    "source": [
+      "notifier.js",
+      "util.js",
+      "views/document_lens.js",
+      "views/document.js",
+      "instructor.js",
+      "model/document.js",
+      "views/node.js",
+      "views/node/code.js",
+      "views/node/document.js",
+      "views/node/image.js",
+      "views/node/quote.js",
+      "views/node/section.js",
+      "views/node/text.js",
+      "boot.js"
+    ]
+  }
+}
