@@ -4,3 +4,5 @@ dist
 static/tmp
 substantial.sqlite3
 .DS_Store
+config.json
+node_modules/
