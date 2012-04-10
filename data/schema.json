@@ -1,0 +1,96 @@
+{
+  "/type/user": {
+    "_id": "/type/user",
+    "type": "/type/type",
+    "name": "User",
+    "properties": {
+      "username": {
+        "name": "Username",
+        "unique": true,
+        "type": "string",
+        "required": true,
+        "validator": "^[a-zA-Z_]{1}[a-zA-Z_0-9-]{1,20}$"
+      },
+      "name": {
+        "name": "Full Name",
+        "unique": true,
+        "type": "string",
+        "required": true
+      }
+    },
+    "indexes": {
+      "by_email": ["email"]
+    }
+  },
+
+  "/type/node": {
+    "_id": "/type/node",
+    "type": "/type/type",
+    "name": "Node",
+    "properties": {
+      "username": {
+        "name": "Username",
+        "unique": true,
+        "type": "string",
+        "required": true,
+        "validator": "^[a-zA-Z_]{1}[a-zA-Z_0-9-]{1,20}$"
+      },
+      "name": {
+        "name": "Full Name",
+        "unique": true,
+        "type": "string",
+        "required": true
+      }
+    },
+    "indexes": {
+      "by_email": ["email"]
+    }
+  },
+  
+  "/type/comment": {
+    "_id": "/type/comment",
+    "type": "/type/type",
+    "properties": {
+      "node": {
+        "name": "Node",
+        "type": ["/type/section", "/type/text", "/type/image", "/type/resource", "/type/quote", "/type/code", "/type/question", "/type/answer"],
+        "unique": true,
+        "required": true
+      },
+      "document": {
+        "name": "Document",
+        "type": ["/type/document"],
+        "unique": true,
+        "required": true
+      },
+      "version": {
+        "name": "Version",
+        "type": ["/type/version"],
+        "unique": true,
+        "required": false
+      },
+      "creator": {
+        "name": "Creator",
+        "type": "/type/user",
+        "unique": true,
+        "required": true
+      },
+      "created_at": {
+        "name": "Created at",
+        "unique": true,
+        "type": "date",
+        "required": true
+      },
+      "content": {
+        "name": "Content",
+        "type": "string",
+        "unique": true,
+        "required": true
+      }
+    },
+    "indexes": {
+      "by_node": ["node"],
+      "by_user": ["user"]
+    }
+  }
+}

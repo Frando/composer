@@ -1,0 +1,20 @@
+{
+  "/document/foo": {
+    "_id": "/document/foo",
+    "type": "/type/document",
+    "title": "Hello World",
+    "nodes": ["/text/1", "/section/1", "/text/2"]
+  },
+  "/text/1": {
+    "type": "/type/text",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue."
+  },
+  "/section/1": {
+    "type": "/type/section",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue."
+  },
+  "/text/2": {
+    "type": "/type/text",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue."
+  }
+}

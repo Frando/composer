@@ -1,4 +1,4 @@
-s.views.Node = Backbone.View.extend(_.extend({}, StateMachine, {
+sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
 
   className: 'content-node',
 
@@ -8,17 +8,10 @@ s.views.Node = Backbone.View.extend(_.extend({}, StateMachine, {
 
   initialize: function (options) {
     this.state  = 'read';
-    this.parent = options.parent;
+    // this.parent = options.parent;
     this.level  = options.level;
     this.root   = options.root;
 
-    if (!this.root) {
-      this.nodes = {};
-      this.root = this;
-      this.document = options.document;
-    } else {
-      this.root.nodes[this.model._id] = this;
-    }
 
     // this.comments = new s.views.Comments({ model: this.model, node: this });
     // this.afterControls = new s.views.Controls({
@@ -30,8 +23,8 @@ s.views.Node = Backbone.View.extend(_.extend({}, StateMachine, {
     
     $(this.el).attr({ id: this.model.html_id });
     
-    _.bindAll(this, 'lastChildChanged');
-    this.model.bind('last-child-changed', this.lastChildChanged);
+    // _.bindAll(this, 'lastChildChanged');
+    // this.model.bind('last-child-changed', this.lastChildChanged);
   },
 
   transitionTo: function (state) {
@@ -42,11 +35,11 @@ s.views.Node = Backbone.View.extend(_.extend({}, StateMachine, {
   },
 
   lastChildChanged: function () {
-    this.afterControls.render();
+    // this.afterControls.render();
     
-    if (this.parent && isLastChild(this.parent, this.model)) {
-      this.parent.trigger('last-child-changed');
-    }
+    // if (this.parent && isLastChild(this.parent, this.model)) {
+    //   this.parent.trigger('last-child-changed');
+    // }
   },
 
 
@@ -170,9 +163,10 @@ s.views.Node = Backbone.View.extend(_.extend({}, StateMachine, {
 
   render: function () {
     this.operationsEl = $(s.util.tpl('operations', {
-      commentCount: this.model.get('comment_count') || "",
-      authorized: this.root.document.authorized
+      // commentCount: this.model.get('comment_count') || "",
+      // authorized: this.root.document.authorized
     })).appendTo(this.el);
+    
     this.contentEl = $('<div class="content"/>').appendTo(this.el);
     if (this.model.get('direction') === "right") this.contentEl.css('direction', 'rtl');
     if (this.comments) this.commentsEl = $(this.comments.render().el).appendTo(this.el);

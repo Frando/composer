@@ -1,0 +1,20 @@
+{
+  "/type/section": {
+    "_id": "/type/section",
+    "type": "/type/type",
+    "name": "Section",
+    "properties": {
+      "name": {
+        "name": "Name",
+        "unique": true,
+        "type": "string",
+        "default": ""
+      },
+      "direction": {
+        "name": "Direction",
+        "unique": true,
+        "type": "string"
+      }
+    }
+  }
+}

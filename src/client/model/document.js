@@ -1,4 +1,4 @@
-var Document = function(document) {
+sc.models.Document = function(document) {
   // Initialize document
 
   this.graph = new Data.Graph(document);

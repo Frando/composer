@@ -1,39 +1,30 @@
 {
   "scripts": {
     "development": [
-      "/javascripts/jquery.min.js",
-      "/javascripts/jquery.transloadit2.js",
-      "/javascripts/jquery.hotkeys.js",
-      "/javascripts/jquery.timeago.js",
-      "/javascripts/chosen.jquery.min.js",
-      "/javascripts/underscore.js",
-      "/lib/data/data.js",
-      "/lib/dance/dance.js"
+      "jquery.min.js",
+      "jquery.transloadit2.js",
+      "jquery.hotkeys.js",
+      "jquery.timeago.js",
+      "underscore.js",
+      "data/data.js",
+      "dance/dance.js"
     ],
     "production": [
-      "/javascripts/jquery.min.js",
-      "/javascripts/jquery.transloadit2.js",
-      "/javascripts/jquery.hotkeys.js",
-      "/javascripts/jquery.timeago.js",
-      "/javascripts/chosen.jquery.min.js",
-      "/javascripts/underscore.js",
-      "/lib/data/data.js",
-      "/lib/dance/dance.js"
+      "jquery.min.js",
+      "jquery.transloadit2.js",
+      "jquery.hotkeys.js",
+      "jquery.timeago.js",
+      "chosen.jquery.min.js",
+      "underscore.js",
+      "data/data.js",
+      "dance/dance.js"
     ],
     "source": [
-      "notifier.js",
-      "util.js",
-      "views/document_lens.js",
-      "views/document.js",
-      "instructor.js",
+      "composer.js",
       "model/document.js",
+      "instructors/instructor.js",
+      "views/document.js",
       "views/node.js",
-      "views/node/code.js",
-      "views/node/document.js",
-      "views/node/image.js",
-      "views/node/quote.js",
-      "views/node/section.js",
-      "views/node/text.js",
       "boot.js"
     ]
   }

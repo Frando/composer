@@ -1,0 +1,21 @@
+{
+  "/type/code": {
+    "_id": "/type/code",
+    "type": "/type/type",
+    "name": "Code",
+    "properties": {
+      "content": {
+        "name": "Content",
+        "unique": true,
+        "type": "string",
+        "default": ""
+      },
+      "language" : {
+        "name": "Language",
+        "unique": true,
+        "type": "string",
+        "default": "javascript"
+      }
+    }
+  }
+}

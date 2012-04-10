@@ -1,0 +1,56 @@
+{
+  "/type/document": {
+    "_id": "/type/document",
+    "type": "/type/type",
+    "name": "Document",
+    "properties": {
+      "name": {
+        "name": "Internal name",
+        "unique": true,
+        "type": "string",
+        "required": true,
+        "validator": "^[a-zA-Z_0-9]{1}[a-zA-Z_0-9-]{2,40}$"
+      },
+      "title": {
+        "name": "Document Title",
+        "unique": true,
+        "type": "string",
+        "default": ""
+      },
+      "lead": {
+        "name": "Lead",
+        "unique": true,
+        "type": "string",
+        "default": ""
+      },
+      "creator": {
+        "name": "Creator",
+        "unique": true,
+        "type": "/type/user",
+        "required": true,
+        "meta": {}
+      },
+      "created_at": {
+        "name": "Created at",
+        "unique": true,
+        "type": "date",
+        "required": true
+      },
+      "updated_at": {
+        "name": "Last modified",
+        "unique": true,
+        "type": "date",
+        "required": true
+      },
+      "settings": {
+        "name": "Document Settings",
+        "unique": true,
+        "type": "object"
+      }
+    },
+    "indexes": {
+      "key": ["creator", "name"],
+      "by_creator": ["creator"]
+    }
+  }
+}
