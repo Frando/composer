@@ -1,20 +1,34 @@
 {
-  "/document/foo": {
-    "_id": "/document/foo",
-    "type": "/type/document",
-    "title": "Hello World",
-    "nodes": ["/text/1", "/section/1", "/text/2"]
-  },
-  "/text/1": {
-    "type": "/type/text",
-    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue."
-  },
-  "/section/1": {
-    "type": "/type/section",
-    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue."
-  },
-  "/text/2": {
-    "type": "/type/text",
-    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue."
+  "id": "/michael/john",
+  "created_at": "2012-04-10T15:17:28.946Z",
+  "updated_at": "2012-04-10T15:17:28.946Z",
+  "head": "/cover/1",
+  "tail": "/text/2",
+  "nodes": {
+    "/cover/1": {
+      "type": "/type/cover",
+      "title": "Hello World",
+      "abstract": "This is a hello world document",
+      "next": "/text/1",
+      "prev": null
+    },
+    "/text/1": {
+      "type": "/type/text",
+      "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue.",
+      "prev": "/cover/1",
+      "next": "/section/1"
+    },
+    "/section/1": {
+      "type": "/type/section",
+      "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue.",
+      "prev": "/text/1",
+      "next": "/text/2"
+    },
+    "/text/2": {
+      "type": "/type/text",
+      "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue.",
+      "prev": "/section/1",
+      "next": null
+    }
   }
 }
