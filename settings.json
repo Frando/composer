@@ -21,6 +21,7 @@
     ],
     "source": [
       "composer.js",
+      "util.js",
       "model/document.js",
       "instructors/instructor.js",
       "views/document.js",
