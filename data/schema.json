@@ -1,4 +1,43 @@
 {
+  "/type/document": {
+    "_id": "/type/document",
+    "type": "/type/type",
+    "name": "Document",
+    "properties": {
+      "creator": {
+        "name": "Creator",
+        "unique": true,
+        "type": "/type/user",
+        "required": true,
+        "meta": {}
+      },
+      "created_at": {
+        "name": "Created at",
+        "unique": true,
+        "type": "date",
+        "required": true
+      },
+      "updated_at": {
+        "name": "Last modified",
+        "unique": true,
+        "type": "date",
+        "required": true
+      },
+      "head": {
+        "name": "Last modified",
+        "unique": true,
+        "type": "date",
+        "required": true
+      },
+      "nodes": {
+        "name": "Nodes",
+        "unique": true,
+        "type": "object",
+        "required": true
+      }
+    }
+  },
+
   "/type/user": {
     "_id": "/type/user",
     "type": "/type/type",

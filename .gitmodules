@@ -1,7 +1,0 @@
-
-[submodule "lib/data"]
-	path = lib/data
-	url = git@github.com:michael/data.git
-[submodule "lib/dance"]
-	path = lib/dance
-	url = git@github.com:michael/dance
