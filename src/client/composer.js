@@ -12,9 +12,9 @@
       // Document View
       this.views = {};
 
-      this.views.nodes = new Substance.Composer.views.NodeList();
-      // this.views.document = new Substance.Composer.views.Document();
-
+      // this.views.nodes = new Substance.Composer.views.NodeList();
+      this.views.document = new Substance.Composer.views.Document();
+      
       // Initialize router
       this.instructor = new Substance.Composer.instructors.Instructor({});
     },
@@ -25,8 +25,7 @@
     },
 
     render: function() {
-      console.log('rendering composer');
-      $(this.el).html()
+      $('#container').html(_.tpl('composer'));
     }
   },
   // Class Variables
