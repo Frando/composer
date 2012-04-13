@@ -1,0 +1,21 @@
+{
+  "/type/cover": {
+    "_id": "/type/cover",
+    "type": "/type/type",
+    "name": "Cover",
+    "properties": {
+      "title": {
+        "name": "Document Title",
+        "unique": true,
+        "type": "string",
+        "default": ""
+      },
+      "abstract": {
+        "name": "Abstract",
+        "unique": true,
+        "type": "string",
+        "default": ""
+      }
+    }
+  }
+}

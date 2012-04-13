@@ -1,4 +1,4 @@
-sc.views.Node.define([ '/type/document' ], {
+sc.views.Node.define([ '/type/cover' ], {
 
   className: 'content-node document',
 
