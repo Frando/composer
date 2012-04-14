@@ -4,19 +4,23 @@
   var Substance = {};
 
   var Composer = Dance.Performer.extend({
+    el: 'container',
     initialize: function() {
 
-      // The composer owns a graph
-      this.document = new Composer.models.Document();
+      // Document Model
+      this.model = new Composer.models.Document(this.model);
 
-      // Document View
+      // Views
       this.views = {};
-
-      // this.views.nodes = new Substance.Composer.views.NodeList();
-      this.views.document = new Substance.Composer.views.Document();
+      this.views.document = new Substance.Composer.views.Document({model: this.model});
       
       // Initialize router
       this.instructor = new Substance.Composer.instructors.Instructor({});
+    },
+
+    // Dispatch command
+    execute: function(command) {
+      this.model[command.command](command.params);
     },
 
     start: function() {
@@ -25,7 +29,8 @@
     },
 
     render: function() {
-      $('#container').html(_.tpl('composer'));
+      this.$el.html(_.tpl('composer'));
+      this.$('#document').replaceWith(this.views.document.render().el);
     }
   },
   // Class Variables

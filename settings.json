@@ -6,8 +6,8 @@
       "jquery.hotkeys.js",
       "jquery.timeago.js",
       "underscore.js",
-      "data/data.js",
-      "dance/dance.js"
+      "data.js",
+      "dance.js"
     ],
     "production": [
       "jquery.min.js",
@@ -16,8 +16,8 @@
       "jquery.timeago.js",
       "chosen.jquery.min.js",
       "underscore.js",
-      "data/data.js",
-      "dance/dance.js"
+      "data.js",
+      "dance.js"
     ],
     "source": [
       "composer.js",

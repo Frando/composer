@@ -1,29 +1,22 @@
-// s.views.Node.define('/type/text', {
+sc.views.Node.define('/type/text', {
 
-//   className: 'content-node text',
+  className: 'content-node text',
 
-//   focus: function () {
-//     $(this.textEl).click();
-//   },
+  focus: function () {
+    $(this.textEl).click();
+  },
 
-//   select: function () {
-//     s.views.Node.prototype.select.apply(this);
-//     this.$('.proper-commands').show();
-//   },
+  select: function () {
+    sc.views.Node.prototype.select.apply(this);
+  },
 
-//   deselect: function () {
-//     s.views.Node.prototype.deselect.apply(this);
-//     this.$('.proper-commands').hide();
-//   },
+  deselect: function () {
+    sc.views.Node.prototype.deselect.apply(this);
+  },
 
-//   render: function () {
-//     s.views.Node.prototype.render.apply(this, arguments);
-//     this.textEl = this.makeEditable(this.contentEl, 'content', "Enter Text", {
-//       markup: true,
-//       multiline: true,
-//       controlsTarget: $(this.el)
-//     });
-//     return this;
-//   }
-
-// });
+  render: function () {
+    sc.views.Node.prototype.render.apply(this, arguments);
+    $(this.contentEl).html(this.model.get('content'));
+    return this;
+  }
+});

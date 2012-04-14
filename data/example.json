@@ -4,31 +4,20 @@
   "updated_at": "2012-04-10T15:17:28.946Z",
   "head": "/cover/1",
   "tail": "/text/2",
+  "rev": 2,
   "nodes": {
     "/cover/1": {
-      "type": "/type/cover",
+      "type": ["/type/node", "/type/cover"],
       "title": "Hello World",
       "abstract": "This is a hello world document",
-      "next": "/text/1",
+      "next": "/text/2",
       "prev": null
     },
-    "/text/1": {
-      "type": "/type/text",
+    "/text/2": {
+      "type": ["/type/node", "/type/text"],
       "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue.",
       "prev": "/cover/1",
-      "next": "/section/1"
-    },
-    "/section/1": {
-      "type": "/type/section",
-      "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue.",
-      "prev": "/text/1",
-      "next": "/text/2"
-    },
-    "/text/2": {
-      "type": "/type/text",
-      "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc venenatis quam ut eros imperdiet non pretium leo malesuada. Sed volutpat adipiscing fermentum. Praesent aliquam, nulla a blandit scelerisque, leo nisi elementum dui, ut ultrices quam lorem ut augue.",
-      "prev": "/section/1",
-      "next": null
+      "next": "/section/3"
     }
   }
 }

@@ -2,7 +2,7 @@ var express = require('express');
 var app = express.createServer();
 var fs = require('fs');
 var url = require('url');
-var Data = require('./lib/data/data');
+var Data = require('./lib/data');
 var _ = require('underscore');
 var util = require('./src/server/util.js')
 
@@ -28,6 +28,7 @@ app.configure(function() {
   app.use(express.static(__dirname+"/test", { maxAge: 41 }));
   app.use(express.static(__dirname+"/src/client", { maxAge: 41 }));
   app.use(express.static(__dirname+"/lib", { maxAge: 41 }));
+  app.use(express.static(__dirname+"/data", { maxAge: 41 }));
   app.use(express.static(__dirname+"/nodes", { maxAge: 41 }));
   app.use(express.logger({ format: ':method :url' }));
 });

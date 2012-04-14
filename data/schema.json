@@ -1,98 +1,29 @@
 {
-  "/type/document": {
-    "_id": "/type/document",
-    "type": "/type/type",
-    "name": "Document",
-    "properties": {
-      "creator": {
-        "name": "Creator",
-        "unique": true,
-        "type": "/type/user",
-        "required": true,
-        "meta": {}
-      },
-      "created_at": {
-        "name": "Created at",
-        "unique": true,
-        "type": "date",
-        "required": true
-      },
-      "updated_at": {
-        "name": "Last modified",
-        "unique": true,
-        "type": "date",
-        "required": true
-      },
-      "head": {
-        "name": "Last modified",
-        "unique": true,
-        "type": "date",
-        "required": true
-      },
-      "nodes": {
-        "name": "Nodes",
-        "unique": true,
-        "type": "object",
-        "required": true
-      }
-    }
-  },
-
-  "/type/user": {
-    "_id": "/type/user",
-    "type": "/type/type",
-    "name": "User",
-    "properties": {
-      "username": {
-        "name": "Username",
-        "unique": true,
-        "type": "string",
-        "required": true,
-        "validator": "^[a-zA-Z_]{1}[a-zA-Z_0-9-]{1,20}$"
-      },
-      "name": {
-        "name": "Full Name",
-        "unique": true,
-        "type": "string",
-        "required": true
-      }
-    },
-    "indexes": {
-      "by_email": ["email"]
-    }
-  },
-
   "/type/node": {
     "_id": "/type/node",
     "type": "/type/type",
     "name": "Node",
     "properties": {
-      "username": {
-        "name": "Username",
+      "next": {
+        "name": "Next Node",
         "unique": true,
-        "type": "string",
-        "required": true,
-        "validator": "^[a-zA-Z_]{1}[a-zA-Z_0-9-]{1,20}$"
+        "type": "/type/node"
       },
-      "name": {
-        "name": "Full Name",
+      "prev": {
+        "name": "Previous Node",
         "unique": true,
-        "type": "string",
-        "required": true
+        "type": "/type/node"
       }
-    },
-    "indexes": {
-      "by_email": ["email"]
-    }
+    } 
   },
-  
+
   "/type/comment": {
     "_id": "/type/comment",
     "type": "/type/type",
     "properties": {
       "node": {
         "name": "Node",
-        "type": ["/type/section", "/type/text", "/type/image", "/type/resource", "/type/quote", "/type/code", "/type/question", "/type/answer"],
+        "type": ["/type/node"],
         "unique": true,
         "required": true
       },
@@ -130,6 +61,30 @@
     "indexes": {
       "by_node": ["node"],
       "by_user": ["user"]
+    }
+  },
+
+  "/type/user": {
+    "_id": "/type/user",
+    "type": "/type/type",
+    "name": "User",
+    "properties": {
+      "username": {
+        "name": "Username",
+        "unique": true,
+        "type": "string",
+        "required": true,
+        "validator": "^[a-zA-Z_]{1}[a-zA-Z_0-9-]{1,20}$"
+      },
+      "name": {
+        "name": "Full Name",
+        "unique": true,
+        "type": "string",
+        "required": true
+      }
+    },
+    "indexes": {
+      "by_email": ["email"]
     }
   }
 }

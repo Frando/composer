@@ -1,47 +1,6 @@
 sc.views.Document = Dance.Performer.extend({
   id: 'document',
 
-  initialize: function (options) {
-    _.bindAll(this);
-
-    // It's a stub
-    this.model = {"type": {_id: "/type/document"}};
-    this.node = sc.views.Node.create({ model: this.model, document: this });
-
-    // this.documentLens = new s.views.DocumentLens({ model: {items: sections, document: this}, authorized: this.authorized });
-    
-    // this.currentView = null;
-    
-    // _.bindAll(this, 'deselect', 'onKeydown');
-    // $(document.body).keydown(this.onKeydown);
-    // if (!this.bounds) setTimeout(this.calcBounds, 400);
-    // $(window).scroll(this.markActiveSection);
-  },
-
-  render: function () {
-
-    // $(this.el).html(s.util.tpl('document', {
-    //   doc: this.model,
-    //   authorized: this.authorized
-    // }));
-    console.log('rendering document');
-    
-    // // $(this.documentLens.render().el).appendTo(this.$('#document'));
-    // $(this.node.render().el).appendTo(this.$('#document'));
-    // if (this.authorized && !this.version) { this.edit(); }
-    // this.$('#document_content').click(this.deselect);
-
-    // return this;
-  },
-
-  remove: function () {
-    // $(document.body).unbind('keydown', this.onKeydown);
-    // this.$('#document_content').unbind('click', this.deselect);
-    // $(this.el).remove();
-    // return this;
-  },
-
-
   // Events
   // ------
 
@@ -52,60 +11,72 @@ sc.views.Document = Dance.Performer.extend({
   // Handlers
   // --------
 
-
   onKeydown: function (e) {
-    if (e.keyCode === 27) {
-      // Escape key
-      this.deselect();
+    if (e.keyCode === 27) this.deselect(); // ESC
+  },
+
+  initialize: function (options) {
+    _.bindAll(this, 'deselect', 'onKeydown', 'insertNode');
+
+    this.model.on('node:insert', this.insertNode);
+    this.model.on('node:update', this.updateNode);
+
+    this.build();
+    $(document.body).keydown(this.onKeydown);
+  },
+
+  build: function() {
+    this.nodes = [];
+    this.model.each(function(node) {
+      this.nodes.push(this.createNodeView(node));
+    }, this);
+  },
+
+  insertNode: function(node, options) {
+    console.log('inserting node', node);
+    var view = this.createNodeView(node);
+    this.nodes.push(view);
+    $(view.render().el).appendTo(this.el);
+  },
+
+  createNodeView: function(node) {
+    return sc.views.Node.create({
+      document: this.model,
+      model: node
+    });
+  },
+
+  selectNode: function (view) {
+    this.deselectNode();
+    $(this.el).addClass('something-selected');
+    view.select();
+    this.selected = view;
+  },
+
+  deselectNode: function () {
+    if (this.selected) {
+      $(this.el).removeClass('something-selected');
+      this.selected.deselect();
+      delete this.selected;
     }
   },
 
+  render: function () {
+    _.each(this.nodes, function(node, index) {
+      $(node.render().el).appendTo(this.el);
+    }, this);
+    return this;
+  },
 
   // Helpers
   // -------
 
   edit: function () {
-    // this.node.transitionTo('write');
+    this.node.transitionTo('write');
   },
 
   deselect: function () {
-    // if (this.node) {
-    //   this.node.deselectNode();
-    //   window.editor.deactivate();
-    //   this.$(':focus').blur();
-    // }
+    // TODO
   }
 
-  // Calculate section bounds
-  // calcBounds: function() {
-  //   var that = this;
-  //   this.bounds = [];
-  //   this.sections = [];
-  //   $('#document .content-node.section').each(function() {
-  //     that.bounds.push($(this).offset().top);
-  //     that.sections.push(graph.get(this.id.replace(/_/g, '/')));
-  //   });
-  // },
-
-  // markActiveSection: function() {
-  //   var that = this;
-  //   function getActiveSection() {
-  //     var active = 0;
-  //     _.each(that.bounds, function(bound, index) {
-  //       if ($(window).scrollTop() >= bound-90) {
-  //         active = index;
-  //       }
-  //     });
-  //     return active;
-  //   }
-
-  //   function update(e) {
-  //     that.activeSection = getActiveSection();
-  //     if (that.activeSection !== that.prevSection) {
-  //       that.prevSection = that.activeSection;
-  //       that.documentLens.selectSection(that.activeSection);
-  //     }
-  //   }
-  //   update();
-  // },
 });
