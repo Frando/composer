@@ -15,13 +15,19 @@ sc.views.Document = Dance.Performer.extend({
     if (e.keyCode === 27) this.deselect(); // ESC
   },
 
+  updateSelection: function() {
+
+  },
+
   initialize: function (options) {
     _.bindAll(this, 'deselect', 'onKeydown', 'insertNode');
 
     this.model.on('node:insert', this.insertNode);
     this.model.on('node:update', this.updateNode);
+    this.model.on('node:select', this.updateSelection);
 
     this.build();
+
     $(document.body).keydown(this.onKeydown);
   },
 
@@ -37,6 +43,10 @@ sc.views.Document = Dance.Performer.extend({
     var view = this.createNodeView(node);
     this.nodes.push(view);
     $(view.render().el).appendTo(this.el);
+  },
+
+  updateSelection: function() {
+    console.log('updating selection');
   },
 
   createNodeView: function(node) {

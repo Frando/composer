@@ -1,5 +1,6 @@
 sc.models.Document = function(document) {
   var that = this;
+
   // Initialize document
   this.nodes = new Data.Graph(seed);
   this.nodes.merge(document.nodes);
@@ -8,10 +9,87 @@ sc.models.Document = function(document) {
   this.tail = this.nodes.get(document.tail);
   this.rev = document.rev;
 
+  this.selections = {};
+  this.users = [];
 
   function checkRev(rev) {
     return that.rev === rev;
   }
+
+  // Node API
+  // --------
+
+  this.node = {
+
+    // Process update command
+    update: function(options) {
+      var node = {};
+      that.trigger('node:update', node);
+    },
+
+    // Update selection
+    select: function(options) {
+      // TODO: check for rival selection
+      var current = that.get(options.head);
+      that.selections[current._id] = options.user;
+
+      while (current = current.get('next') && current !== options.tail) {
+        that.selections[current._id] = options.user;
+      }
+      if (current) that.selections[current._id] = options.user;
+      that.trigger('node:select', options);
+    },
+
+    // Insert a new node
+    insert: function(options) {
+      if (checkRev(options.rev)) {
+        
+        var node = that.nodes.set(_.extend({
+          "type": ["/type/node", "/type/"+options.type],
+          _id: ["", options.type, options.rev].join('/'),
+          prev: that.tail._id
+        }, options.attributes));
+        that.tail.set({next: node._id});
+        that.tail = node;
+        if (node) {
+          that.rev += 1;
+          that.trigger('node:insert', node);
+          return node;
+        }  
+      }
+      return null;
+    },
+
+    // Move selected nodes
+    move: function() {
+      console.log('moving node');
+    },
+
+    // Delete node by id
+    delete: function(node) {
+
+    }
+  };
+
+
+  // Patch API
+  // --------
+
+  this.patch = {
+
+  }
+
+  // Comment API
+  // --------
+
+  this.comment = {
+
+  }
+
+
+
+  // Document API
+  // --------
 
   // Iterate over all nodes
   this.each = function(fn, ctx) {
@@ -23,56 +101,19 @@ sc.models.Document = function(document) {
       index += 1;
       fn.call(ctx || this, current, current._id, index);
     }
-
   };
 
   // Get a specific node
   this.get = function(id) {
-
+    return this.nodes.get(id);
   };
-
-  // Process update command
-  this.update = function(id, options) {
-    var node = {};
-    this.trigger('node:update', node);
-  };
-
-  // Insert a new node
-  this.insert = function(options) {
-    if (checkRev(options.rev)) {
-      
-      var node = this.nodes.set(_.extend({
-        "type": ["/type/node", "/type/"+options.type],
-        _id: ["", options.type, options.rev].join('/'),
-        prev: this.tail._id
-      }, options.attributes));
-      this.tail.set({next: node._id});
-      this.tail = node;
-      if (node) {
-        this.rev += 1;
-        this.trigger('node:insert', node);
-        return node;
-      }  
-    }
-    return null;
-  };
-
 
   // Serialize document state to JSON
   this.toJSON = function() {
 
   };
-
-  // Delete node by id
-  this.delete = function(node) {
-
-  };
-
-  // Move an existing node around
-  this.move = function(node, options) {
-
-  };
 };
+
 
 // Load a document
 sc.models.Document.load = function(url, cb) {

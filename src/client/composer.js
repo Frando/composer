@@ -19,8 +19,9 @@
     },
 
     // Dispatch command
-    execute: function(command) {
-      this.model[command.command](command.params);
+    execute: function(op) {
+      var command = op.command.split(':');
+      this.model[command[0]][command[1]](op.params);
     },
 
     start: function() {
