@@ -10,18 +10,28 @@
       // Document Model
       this.model = new Composer.models.Document(this.model);
 
+      // Operations History
+      this.operations = [];
+
       // Views
       this.views = {};
       this.views.document = new Substance.Composer.views.Document({model: this.model});
       
-      // Initialize router
+      // Initialize Router
       this.instructor = new Substance.Composer.instructors.Instructor({});
     },
 
-    // Dispatch command
+
+    logOperation: function(op) {
+      this.operations.push(op);
+      this.trigger('operation:executed');
+    },
+
+    // Dispatch Operation
     execute: function(op) {
       var command = op.command.split(':');
       this.model[command[0]][command[1]](op.params);
+      this.logOperation(op);
     },
 
     start: function() {
