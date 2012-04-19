@@ -25,6 +25,7 @@
       "model/document.js",
       "instructors/instructor.js",
       "views/document.js",
+      "views/operations.js",
       "views/node.js",
       "boot.js"
     ]

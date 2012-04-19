@@ -1,0 +1,9 @@
+<h2>Operations</h2>
+<div class="operations">
+  <% _.each(operations, function(o) { %>
+    <div class="operation">
+      <div class="opcode"><%= o.command %></div>
+      <pre class="params"><%= JSON.stringify(o.params) %></pre>
+    </div>
+  <% }); %>
+</div>

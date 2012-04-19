@@ -19,8 +19,8 @@ sc.views.Node.define([ '/type/cover' ], {
 
   render: function () {
     sc.views.Node.prototype.render.apply(this, arguments);
-    this.titleEl = $('<div class="document-title">'+this.model.get('title')+'</div>').appendTo(this.contentEl);
-    this.leadEl = $('<p class="lead" id="document_lead">'+this.model.get('abstract')+'</p>').appendTo(this.contentEl);
+    this.titleEl = $('<div class="document-title" contenteditable="true">'+this.model.get('title')+'</div>').appendTo(this.contentEl);
+    this.leadEl = $('<p class="document-abstract" contenteditable="true">'+this.model.get('abstract')+'</p>').appendTo(this.contentEl);
     return this;
   }
 }, {

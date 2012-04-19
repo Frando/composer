@@ -1,0 +1,24 @@
+/* Generic node styles */
+
+.content-node {
+  position: relative;
+
+  .handle {
+    position: absolute;
+    left: -20px;
+    top: 0px;
+    bottom: 0px;
+    width: 20px;
+    background: #747260;
+    opacity: 0.1;
+  }
+
+  &.active .handle {
+    background: #747260;
+    opacity: 0.3;
+  }
+
+  &.selected .handle {
+    opacity: 1.0;
+  }
+}

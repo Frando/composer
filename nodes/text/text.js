@@ -17,6 +17,7 @@ sc.views.Node.define('/type/text', {
   render: function () {
     sc.views.Node.prototype.render.apply(this, arguments);
     $(this.contentEl).html(this.model.get('content'));
+    $(this.contentEl).attr('contenteditable', true);
     return this;
   }
 });

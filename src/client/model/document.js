@@ -7,10 +7,14 @@ sc.models.Document = function(document) {
 
   this.head = this.nodes.get(document.head);
   this.tail = this.nodes.get(document.tail);
+
   this.rev = document.rev;
 
   this.selections = {};
-  this.users = [];
+  this.users = {};
+
+  // Operations History
+  this.operations = [];
 
   function checkRev(rev) {
     return that.rev === rev;
@@ -29,15 +33,16 @@ sc.models.Document = function(document) {
 
     // Update selection
     select: function(options) {
-      // TODO: check for rival selection
-      var current = that.get(options.head);
-      that.selections[current._id] = options.user;
+      // First remove all selections by that user
+      _.each(_.clone(this.selections, function(user, node) {
+        if (user === options.user) delete this.selections[node];
+      }), this);
 
-      while (current = current.get('next') && current !== options.tail) {
-        that.selections[current._id] = options.user;
-      }
-      if (current) that.selections[current._id] = options.user;
-      that.trigger('node:select', options);
+      _.each(options.nodes, function(node) {
+        that.selections[node] = options.user;
+      });
+
+      that.trigger('node:select', options.nodes);
     },
 
     // Insert a new node
@@ -55,7 +60,7 @@ sc.models.Document = function(document) {
           that.rev += 1;
           that.trigger('node:insert', node);
           return node;
-        }  
+        }
       }
       return null;
     },
@@ -77,16 +82,14 @@ sc.models.Document = function(document) {
 
   this.patch = {
 
-  }
+  };
 
   // Comment API
   // --------
 
   this.comment = {
 
-  }
-
-
+  };
 
   // Document API
   // --------
@@ -101,6 +104,18 @@ sc.models.Document = function(document) {
       index += 1;
       fn.call(ctx || this, current, current._id, index);
     }
+  };
+
+  this.logOperation = function(op) {
+    this.operations.push(op);
+    this.trigger('operation:executed');
+  };
+
+
+  this.execute = function(op) {
+    var command = op.command.split(':');
+    this[command[0]][command[1]](op.params);
+    this.logOperation(op);
   };
 
   // Get a specific node

@@ -20,5 +20,6 @@ _.tpl = function (tpl, ctx) {
 
 
 _.htmlId = function(node) {
-  return node._id.split('/').join('_');
+  node = node instanceof Data.Object ? node._id : node;
+  return node.split('/').join('_');
 };

@@ -8,6 +8,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
 
   initialize: function (options) {
     this.state  = 'read';
+    this.document = options.document;
     $(this.el).attr({ id: _.htmlId(this.model) });
   },
 
@@ -18,7 +19,6 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
     }
   },
 
-
   // Events
   // ------
 
@@ -26,7 +26,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
     'click .remove-node':      'removeNode',
     'click .toggle-move-node': 'toggleMoveNode',
     
-    'click': 'selectThis',
+    'click': 'select',
     'mouseover': 'highlight',
     'mouseout': 'unhighlight'
   },
@@ -55,10 +55,6 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
     }
   },
 
-  selectThis: function (e) {
-    this.el
-  },
-
   highlight: function (e) {
     e.preventDefault();
     $(this.el).addClass('active');
@@ -70,7 +66,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
   },
 
   select: function (e) {
-    $(this.el).addClass('selected');
+    this.document.execute({command:"node:select", user: "michael", params: { nodes: [this.model._id] }});
   },
 
   deselect: function () {
@@ -81,6 +77,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
 
   render: function () {
     this.contentEl = $('<div class="content"></div>').appendTo(this.el);
+    this.handleEl = $('<div class="handle"></div>').appendTo(this.el);
     return this;
   }
 

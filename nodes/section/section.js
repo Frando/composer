@@ -25,6 +25,7 @@ sc.views.Node.define('/type/section', {
   render: function () {
     sc.views.Node.prototype.render.apply(this, arguments);
     $(this.contentEl).html(this.model.get('name'));
+    $(this.contentEl).attr('contenteditable', true);
     return this;
   }
 });
