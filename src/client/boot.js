@@ -1,5 +1,4 @@
 $(function() {
-
   var commands = [
     {"command": "node:insert", "user": "michael", "params": {"type": "text", "rev": 2, "attributes": {"content": "I'm a new text node"}}},
     {"command": "node:insert", "user": "michael", "params": {"type": "section", "rev": 3, "attributes": {"name": "Operations"}}},
@@ -24,4 +23,7 @@ $(function() {
     composer.start();
     execCommands();
   });
+
+  
+
 });

@@ -15,9 +15,17 @@ sc.views.Node.define('/type/text', {
   },
 
   render: function () {
+    var that = this;
     sc.views.Node.prototype.render.apply(this, arguments);
-    $(this.contentEl).html(this.model.get('content'));
-    $(this.contentEl).attr('contenteditable', true);
+
+    setTimeout(function() {
+      that.editor = CodeMirror(that.contentEl[0], {
+        lineWrapping: true,
+        value: that.model.get('content'),
+        onChange: function() {
+        }
+      });      
+    }, 20);
     return this;
   }
 });
