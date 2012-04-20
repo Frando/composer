@@ -1,9 +1,10 @@
 <h2>Operations</h2>
 <div class="operations">
-  <% _.each(operations, function(o) { %>
+  <% _.each(_.clone(operations).reverse(), function(o) { %>
     <div class="operation">
-      <div class="opcode"><%= o.command %></div>
-      <pre class="params"><%= JSON.stringify(o.params) %></pre>
+      <% var cmd = o.command.split(':') %>
+      <div class="opcode"><div class="scope"><%= cmd[0] %></div><div class="op"><%= cmd[1] %></div></div>
+      <pre class="command"><%= JSON.stringify(o, undefined, 2) %></pre>
     </div>
   <% }); %>
 </div>

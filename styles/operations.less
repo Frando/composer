@@ -1,8 +1,41 @@
 /* Common styles
 -------------------------------------------------------------------------------*/
 
-
-
 .operations {
 
+}
+
+.operations .operation {
+  border-left: 10px solid #444;
+  padding: 0px 0px;
+  margin-bottom: 1px;
+
+  .opcode {
+    overflow: auto;
+  }
+
+  .opcode .scope {
+    float: left;
+    background: #ccc;
+    width: 50px;
+    text-align: center;
+  }
+
+  .opcode .op {
+    background: #ccc;
+    float: left;
+    margin-left: 1px;
+    width: 150px;
+    padding: 0 10px;
+  }
+  .command {
+    display: none;
+    position: absolute;
+    left: 50px;
+    background: white;
+  }
+
+  &:hover .command {
+    display: block;
+  }
 }
