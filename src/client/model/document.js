@@ -33,16 +33,19 @@ sc.models.Document = function(document) {
 
     // Update selection
     select: function(options) {
-      // First remove all selections by that user
-      _.each(_.clone(this.selections, function(user, node) {
-        if (user === options.user) delete this.selections[node];
-      }), this);
+      if (that.users[options.user].selection) {
+        _.each(that.users[options.user].selection, function(node) {
+          delete that.selections[node];
+        });
+      }
 
+      that.users[options.user].selection = options.nodes;
+      
       _.each(options.nodes, function(node) {
         that.selections[node] = options.user;
       });
 
-      that.trigger('node:select', options.nodes);
+      that.trigger('node:select', that.selections);
     },
 
     // Insert a new node
@@ -91,6 +94,17 @@ sc.models.Document = function(document) {
 
   };
 
+  // User API
+  // --------
+
+  this.user = {
+    // TODO: dynamic color assignment for users
+    announce: function(options) {
+      that.users[options.user] = { username: options.user, color: options.color || "red"};
+    }
+  };
+
+
   // Document API
   // --------
 
@@ -110,7 +124,6 @@ sc.models.Document = function(document) {
     this.operations.push(op);
     this.trigger('operation:executed');
   };
-
 
   this.execute = function(op) {
     var command = op.command.split(':');

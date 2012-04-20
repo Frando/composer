@@ -11,16 +11,12 @@ sc.views.Document = Dance.Performer.extend({
   // Handlers
   // --------
 
-  onKeydown: function (e) {
-    if (e.keyCode === 27) this.deselect(); // ESC
-  },
-
   initialize: function (options) {
-    _.bindAll(this, 'deselect', 'onKeydown', 'insertNode');
+    _.bindAll(this, 'insertNode');
 
     this.model.on('node:insert', this.insertNode, this);
     this.model.on('node:update', this.updateNode, this);
-    this.model.on('node:select', this.updateSelection, this);
+    this.model.on('node:select', this.updateSelections, this);
 
     this.build();
 
@@ -35,17 +31,37 @@ sc.views.Document = Dance.Performer.extend({
   },
 
   insertNode: function(node, options) {
-    console.log('inserting node', node);
     var view = this.createNodeView(node);
     this.nodes.push(view);
     $(view.render().el).appendTo(this.el);
   },
 
-  updateSelection: function(nodes) {
+  updateSelections: function(selections) {
+    $('.content-node.selected .handle').css('background', '');
     $('.content-node.selected').removeClass('selected');
-    _.each(nodes, function(n) {
-      $('#'+_.htmlId(n)).addClass('selected');
-    });
+    
+    _.each(selections, function(user, node) {
+      $('#'+_.htmlId(node)).addClass('selected')
+        .find('.handle').css('background', this.model.users[user].color);
+    }, this);
+  },
+
+  expandSelection: function() {
+    var lastnode = _.last(this.model.users[composer.user].selection);
+    if (lastnode) {
+      var next = this.model.get(lastnode).get('next');
+      if (next) {
+        var newSelection = this.model.users[composer.user].selection.concat([next._id]);
+        this.model.execute({command:"node:select", params: { user: "michael", nodes: newSelection }});
+      }
+    }
+  },
+
+  narrowSelection: function() {
+    var selection = this.model.users[composer.user].selection;
+    selection = _.clone(selection).splice(0, selection.length-1);
+        
+    this.model.execute({command:"node:select", params: { user: "michael", nodes: selection }});
   },
 
   createNodeView: function(node) {

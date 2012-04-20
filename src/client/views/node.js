@@ -23,18 +23,11 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
   // ------
 
   events: {
-    'click .remove-node':      'removeNode',
     'click .toggle-move-node': 'toggleMoveNode',
     
-    'click': 'select',
-    'mouseover': 'highlight',
-    'mouseout': 'unhighlight'
-  },
-  
-  removeNode: function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    removeChild(this.parent, this.model);
+    'click': 'select'
+    // 'mouseover': 'highlight',
+    // 'mouseout': 'unhighlight'
   },
 
   toggleMoveNode: function (e) {
@@ -55,22 +48,18 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
     }
   },
 
-  highlight: function (e) {
-    e.preventDefault();
-    $(this.el).addClass('active');
-  },
+  // highlight: function (e) {
+  //   e.preventDefault();
+  //   $(this.el).addClass('active');
+  // },
 
-  unhighlight: function (e) {
-    e.preventDefault();
-    $(this.el).removeClass('active');
-  },
+  // unhighlight: function (e) {
+  //   e.preventDefault();
+  //   $(this.el).removeClass('active');
+  // },
 
   select: function (e) {
-    this.document.execute({command:"node:select", user: "michael", params: { nodes: [this.model._id] }});
-  },
-
-  deselect: function () {
-    $(this.el).removeClass('selected');
+    this.document.execute({command:"node:select", params: { user: "michael", nodes: [this.model._id] }});
   },
 
   focus: function () {},

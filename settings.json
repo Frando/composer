@@ -3,7 +3,7 @@
     "development": [
       "jquery.min.js",
       "jquery.transloadit2.js",
-      "jquery.hotkeys.js",
+      "keymaster.min.js",
       "jquery.timeago.js",
       "underscore.js",
       "data.js",
@@ -12,8 +12,9 @@
     "production": [
       "jquery.min.js",
       "jquery.transloadit2.js",
-      "jquery.hotkeys.js",
+      "keymaster.min.js",
       "jquery.timeago.js",
+      "keymaster.min.js",
       "chosen.jquery.min.js",
       "underscore.js",
       "data.js",

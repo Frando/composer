@@ -5,20 +5,31 @@
 
   var Composer = Dance.Performer.extend({
     el: 'container',
-    initialize: function() {
+    initialize: function(options) {
 
       // Document Model
       this.model = new Composer.models.Document(this.model);
+
+      this.user = options.user;
 
       // Views
       this.views = {};
       this.views.document = new Substance.Composer.views.Document({model: this.model});
       this.views.operations = new Substance.Composer.views.Operations({model: this.model});
       
-
       this.model.on('operation:executed', this.renderOperations, this);
-      // Initialize Router
+
+      // Initialize Instructor
       this.instructor = new Substance.Composer.instructors.Instructor({});
+
+      // Selection shortcuts
+      
+      key('alt+down', _.bind(function() { this.views.document.expandSelection(); return false; }, this));
+      key('alt+up', _.bind(function() { this.views.document.narrowSelection(); return false; }, this));
+      key('esc', _.bind(function() { console.log('clear selection'); return false; }, this));
+
+      // Node insertion shortcuts
+      key('alt+t', _.bind(function() { console.log('insert text node'); }, this));
     },
 
     // Dispatch Operation
