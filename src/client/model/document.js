@@ -40,7 +40,7 @@ sc.models.Document = function(document) {
       }
 
       that.users[options.user].selection = options.nodes;
-      
+
       _.each(options.nodes, function(node) {
         that.selections[node] = options.user;
       });
@@ -69,8 +69,31 @@ sc.models.Document = function(document) {
     },
 
     // Move selected nodes
-    move: function() {
-      console.log('moving node');
+    move: function(options) {
+      console.log(that.rev);
+      if (checkRev(options.rev)) {
+        var f = that.get(_.first(options.nodes)), // first node of selection
+            l = that.get(_.first(options.nodes)), // last node of selection
+            t = that.get(options.target), // target node
+            fp = f.get('prev'),
+            ln = l.get('next'),
+            tn = t.get('next');
+
+        // console.log('before');
+        // console.log('f', f.toJSON(), 'l', l.toJSON(), 't', t.toJSON(), 'fp', fp.toJSON(), 'ln', ln.toJSON(), 'tn', tn.toJSON());
+
+        t.set({next: f._id, prev: t.get('prev') === l ? fp._id : t.get('prev')._id});
+        fp.set({next: ln._id});
+        
+        if (ln) ln.set({prev: fp._id});
+        l.set({next: tn ? tn._id : null});
+        if (tn) tn.set({prev: l._id});
+        that.trigger('node:move', options);
+        that.rev += 1;
+
+        // console.log('after');
+        // console.log('f', f.toJSON(), 'l', l.toJSON(), 't', t.toJSON(), 'fp', fp.toJSON(), 'ln', ln.toJSON(), 'tn', tn.toJSON());
+      }
     },
 
     // Delete node by id

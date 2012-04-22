@@ -16,7 +16,7 @@
 
     "/section/2": {
       "type": ["/type/node", "/type/section"],
-      "name": "Synopsis",
+      "name": "Plugins",
       "prev": "/cover/1",
       "next": null
     }

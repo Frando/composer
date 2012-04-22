@@ -24,10 +24,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
 
   events: {
     'click .toggle-move-node': 'toggleMoveNode',
-    
     'click': 'select'
-    // 'mouseover': 'highlight',
-    // 'mouseout': 'unhighlight'
   },
 
   toggleMoveNode: function (e) {
@@ -48,16 +45,7 @@ sc.views.Node = Dance.Performer.extend(_.extend({}, s.StateMachine, {
     }
   },
 
-  // highlight: function (e) {
-  //   e.preventDefault();
-  //   $(this.el).addClass('active');
-  // },
-
-  // unhighlight: function (e) {
-  //   e.preventDefault();
-  //   $(this.el).removeClass('active');
-  // },
-
+  // TODO: move to document level ?
   select: function (e) {
     this.document.execute({command:"node:select", params: { user: "michael", nodes: [this.model._id] }});
   },

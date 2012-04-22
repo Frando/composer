@@ -12,6 +12,9 @@
 
       this.user = options.user;
 
+      // Possible modes: edit, view, patch, apply-patch
+      this.mode = "edit";
+
       // Views
       this.views = {};
       this.views.document = new Substance.Composer.views.Document({model: this.model});
@@ -23,10 +26,13 @@
       this.instructor = new Substance.Composer.instructors.Instructor({});
 
       // Selection shortcuts
-      
-      key('alt+down', _.bind(function() { this.views.document.expandSelection(); return false; }, this));
-      key('alt+up', _.bind(function() { this.views.document.narrowSelection(); return false; }, this));
+      key('shift+down', _.bind(function() { this.views.document.expandSelection(); return false; }, this));
+      key('shift+up', _.bind(function() { this.views.document.narrowSelection(); return false; }, this));
       key('esc', _.bind(function() { console.log('clear selection'); return false; }, this));
+
+      // Move shortcuts
+      key('down', _.bind(function() { this.views.document.moveDown(); return false; }, this));
+      key('up', _.bind(function() { this.views.document.moveUp(); return false; }, this));
 
       // Node insertion shortcuts
       key('alt+t', _.bind(function() { console.log('insert text node'); }, this));
