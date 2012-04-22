@@ -70,7 +70,7 @@ sc.models.Document = function(document) {
 
     // Move selected nodes
     move: function(options) {
-      console.log(that.rev);
+      // console.log(that.rev);
       if (checkRev(options.rev)) {
         var f = that.get(_.first(options.nodes)), // first node of selection
             l = that.get(_.first(options.nodes)), // last node of selection
