@@ -2,7 +2,8 @@ $(function() {
 
   var commands = [
     {"command": "user:announce", "params": {"user": "michael", "color": "#82AA15"}},    
-    {"command": "node:insert",   "params": {"user": "michael", "type": "text", "rev": 3, "attributes": {"content": "It's literally impossible to build an editor that can be used across different disciplines. Scientists, writers and journalists all have different needs. That's why Substance just provides the core infrastructure, and introduces Content Types that can be developed individually by the community, tailored to their specific needs."}}},
+    // {"command": "node:insert",   "params": {"user": "michael", "type": "text", "rev": 3, "attributes": {"content": "It's literally impossible to build an editor that can be used across different disciplines. Scientists, writers and journalists all have different needs. That's why Substance just provides the core infrastructure, and introduces Content Types that can be developed individually by the community, tailored to their specific needs."}}},
+    {"command": "node:insert",   "params": {"user": "michael", "type": "map", "rev": 3, "attributes": {"content": "Hey! I'm a map."}}},
     {"command": "node:insert",   "params": {"user": "michael", "type": "section", "rev": 4, "attributes": {"name": "Structured Composition"}}},
     {"command": "node:insert",   "params": {"user": "michael", "type": "text", "rev": 5, "attributes": {"content": "Instead of conventional sequential text-editing, documents are composed of Content Nodes in a structured manner. The composer focuses on content, by leaving the layout part to the system, not the user. Because of the absence of formatting utilities, it suggests structured, content-oriented writing."}}},
     {"command": "node:insert",   "params": {"user": "michael", "type": "section", "rev": 6, "attributes": {"name": "Open Collaboration"}}},

@@ -12,6 +12,32 @@
       var templates = {{{{templates}}}};
     </script>
     
+    <script type="text/x-ejs-template" name="overview">
+      <div class="spots">
+        <% spots.each(function(spot) { %>
+          <div class="spot" data-id="<%= spot._id %>">
+            
+          </div>
+        <% }); %>
+      </div>
+    </script>
+
+    <script type="text/x-ejs-template" name="nav_spot">
+      <div class="spot<%= active ? " active" : "" %>" id="<%= _.htmlId(spot._id) %>" data-id="<%= spot._id %>">
+        
+      </div>
+    </script>
+
+    <script type="text/x-ejs-template" name="spot">
+      <div class="spot-details" data-id="<%= spot._id %>">
+        <div><input type="text" class="name" placeholder="Enter Name" value="<%= spot.get('name') %>" maxlength="30"/></div>
+        <div>
+          <textarea class="descr" placeholder="Description&hellip;" maxlength="140"><%= spot.get('descr') %></textarea>
+        </div>
+        <div><a href="#" class="remove-spot"></div>
+      </div>
+    </script>
+
     <script src="head.min.js"></script>
     <script src="codemirror/codemirror.js"></script>
     <script>

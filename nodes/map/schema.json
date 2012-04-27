@@ -1,0 +1,45 @@
+{
+  "/type/map": {
+    "_id": "/type/map",
+    "type": "/type/type",
+    "name": "Map",
+    "properties": {
+      "latitude": {
+        "name": "Latitude",
+        "unique": true,
+        "type": "string",
+        "default": 38.9
+      },
+      "longitude": {
+        "name": "Longitude",
+        "unique": true,
+        "type": "number",
+        "default": -77.035
+      },
+      "zoom": {
+        "name": "Zoom Level",
+        "unique": true,
+        "type": "number",
+        "default": 15
+      },
+      "annotations": {
+        "name": "Annotations",
+        "unique": true,
+        "type": "object",
+        "default": {}
+      },
+      "comment_count": {
+        "name": "Virtual comment count attribute",
+        "unique": true,
+        "type": "number",
+        "default": []
+      },
+      "document": {
+        "name": "Document Membership",
+        "unique": true,
+        "required": true,
+        "type": ["/type/document"]
+      }
+    }
+  }
+}

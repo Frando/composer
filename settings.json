@@ -6,6 +6,7 @@
       "keymaster.min.js",
       "jquery.timeago.js",
       "underscore.js",
+      "leaflet.js",
       "data.js",
       "dance.js"
     ],
