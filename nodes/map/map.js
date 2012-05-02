@@ -16,7 +16,7 @@ collections["spots"] = {
          .appendTo($('.spots-navigation'));
 
     });
-    _.delay(this.collections["spots"].update, 200, spots)
+    _.delay(this.collections["spots"].update, 0, spots)
   },
 
   // Existing Spots
@@ -36,7 +36,7 @@ collections["spots"] = {
 
   exit: function(spots) {
     spots.each(function(spot) {
-      $('#'+htmlId(spot._id)).remove();
+      $('#'+_.htmlId(spot._id)).remove();
     });
   }
 };
@@ -284,7 +284,6 @@ sc.views.Node.define('/type/map', {
     }
 
     _.delay(function() {
-      
       that.layout();
       that.refresh();
 
